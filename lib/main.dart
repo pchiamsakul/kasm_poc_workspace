@@ -36,6 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  // ignore: unused_element
   void _launchUrl() async {
     const clientId = "YOUR_CLIENT_ID_HERE";
     const redirectUri = "myapp://callback"; // registered in Singpass portal
