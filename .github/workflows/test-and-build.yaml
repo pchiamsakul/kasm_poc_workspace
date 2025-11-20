@@ -31,49 +31,55 @@ jobs:
           java-version: '18.x'
 
       # 7.
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      # 8.
       - name: Install FVM
         run: |
           dart pub global activate fvm
           echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
 
-      # 8.
+      # 9.
       - name: Setup Flutter with FVM
         run: |
           fvm install
           fvm flutter --version
 
-      # 9.
+      # 10.
       - name: Get Flutter packages
         run: |
           fvm flutter pub get
 
-      # 10.
+      # 11.
       - name: Check for lints
         run: |
           fvm flutter analyze
 
-      # 11.
+      # 12.
       - name: Run all tests
         run: |
           fvm flutter test
 
-      # 12.
+      # 13.
       - name: Build APK
         run: |
           fvm flutter build apk
 
-      # 13.
+      # 14.
       - name: Flutter build ipa
         run: |
           fvm flutter build ipa --no-codesign
 
-      # 14.
+      # 15.
       - name: Compress Archives and IPAs
         run: |
           cd build
           tar -czf ios_build.tar.gz ios
 
-      # 15.
+      # 16.
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
