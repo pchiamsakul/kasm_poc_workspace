@@ -5,10 +5,19 @@
 *.swp
 .DS_Store
 .atom/
+.build/
 .buildlog/
+.kotlin
 .history
 .svn/
+.swiftpm/
 migrate_working_dir/
+
+# Environment files
+*.env
+.env
+.env.*
+!example.env
 
 # IntelliJ related
 *.iml
@@ -28,6 +37,13 @@ migrate_working_dir/
 .pub/
 /build/
 pubspec.lock
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.gr.dart
+*.config.dart
+*.i18n.dart
 
 # Symbolication related
 app.*.symbols

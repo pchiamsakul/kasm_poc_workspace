@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "859713540250",
+    "project_id": "kasm-poc-workspace",
+    "storage_bucket": "kasm-poc-workspace.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859713540250:android:06f86bafee1ed8e3a80f23",
+        "android_client_info": {
+          "package_name": "com.kasm_poc_workspace"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAC3eNLs9sjDLx-MyfGK44NxJeLtnqCQxw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

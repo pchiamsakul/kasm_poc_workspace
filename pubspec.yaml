@@ -11,15 +11,75 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  async: ^2.11.0
+  clock: ^1.1.2
+  rxdart: ^0.28.0
+  flutter_svg: ^2.2.0
+  percent_indicator: ^4.2.5
+  jiffy: ^6.2.1
+  intl: ^0.20.2
+
   url_launcher: ^6.3.2
 
-  cupertino_icons: ^1.0.8
+  # Animation
+  animations: ^2.0.11
+
+  # Translation
+  slang: ^4.7.3
+  slang_flutter: ^4.7.0
+
+  # Generate
+  get_it: ^8.0.3
+  retrofit: ^4.0.1
+  injectable: ^2.3.0
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.9.0
+  uuid: ^4.5.1
+
+  # Env management
+  package_info_plus: ^8.3.0
+  flutter_dotenv: ^6.0.0
+
+  # Firebase
+  firebase_core: ^4.1.0
+  firebase_analytics: ^12.0.1
+  firebase_remote_config: ^6.0.1
+
+  # Debugging tools
+  flutter_fimber: ^0.7.1
+
+  # Proxy overrides
+  system_proxy: ^0.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  # Generate
+  freezed: ^3.1.0
+  injectable_generator: ^2.4.0
+  retrofit_generator: ^10.0.4
+  json_serializable: ^6.7.1
+  build_runner: ^2.4.6
+  slang_build_runner: ^4.7.0
+  flutter_gen_runner: ^5.3.1
+
+  analyzer: ^7.7.0
   flutter_lints: ^5.0.0
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/svg/
+    - assets/fonts/
+    - assets/json/
+    - develop.env
+    - production.env
+
+flutter_gen:
+  output: lib/generated/
+  integrations:
+    flutter_svg: true

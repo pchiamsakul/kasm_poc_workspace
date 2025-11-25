@@ -5,12 +5,31 @@ allprojects {
     }
 }
 
-val newBuildDir: Directory = rootProject.layout.buildDirectory.dir("../../build").get()
+val newBuildDir: Directory =
+    rootProject.layout.buildDirectory
+        .dir("../../build")
+        .get()
 rootProject.layout.buildDirectory.value(newBuildDir)
 
 subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
+    
+    afterEvaluate {
+        // Fix for plugins with missing namespace
+        val namespaceMap = mapOf(
+            "flutter_fimber" to "com.magillus.flutter_fimber",
+            "system_proxy" to "com.kaivean.system_proxy"
+        )
+        
+        if (project.plugins.hasPlugin("com.android.library")) {
+            project.extensions.findByType(com.android.build.gradle.LibraryExtension::class.java)?.apply {
+                if (namespace == null) {
+                    namespace = namespaceMap[project.name] ?: "com.${project.name.replace("-", "_")}"
+                }
+            }
+        }
+    }
 }
 subprojects {
     project.evaluationDependsOn(":app")

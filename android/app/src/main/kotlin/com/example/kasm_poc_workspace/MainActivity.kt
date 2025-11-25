@@ -1,4 +1,4 @@
-package com.example.singpass_poc
+package com.kasm_poc_workspace
 
 import io.flutter.embedding.android.FlutterActivity
 
