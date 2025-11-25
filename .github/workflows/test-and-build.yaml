@@ -54,32 +54,37 @@ jobs:
           fvm flutter pub get
 
       # 11.
+      - name: Run build_runner
+        run: |
+          fvm flutter pub run build_runner build --delete-conflicting-outputs
+
+      # 12.
       - name: Check for lints
         run: |
           fvm flutter analyze
 
-      # 12.
+      # 13.
       - name: Run all tests
         run: |
           fvm flutter test
 
-      # 13.
+      # 14.
       - name: Build APK
         run: |
           fvm flutter build apk
 
-      # 14.
+      # 15.
       - name: Flutter build ipa
         run: |
           fvm flutter build ipa --no-codesign
 
-      # 15.
+      # 16.
       - name: Compress Archives and IPAs
         run: |
           cd build
           tar -czf ios_build.tar.gz ios
 
-      # 16.
+      # 17.
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
