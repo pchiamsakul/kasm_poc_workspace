@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.kasmPocWorkshop</string>
+	<string>com.poc.kasmWorkshop</string>
 	<key>PROJECT_ID</key>
 	<string>kasm-poc-workspace</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:859713540250:ios:f49fae657d986967a80f23</string>
+	<string>1:859713540250:ios:14078141d1e02280a80f23</string>
 </dict>
 </plist>

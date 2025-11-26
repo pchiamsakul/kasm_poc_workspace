@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAC3eNLs9sjDLx-MyfGK44NxJeLtnqCQxw',
-    appId: '1:859713540250:android:06f86bafee1ed8e3a80f23',
+    appId: '1:859713540250:android:6e56e0cd5cf97304a80f23',
     messagingSenderId: '859713540250',
     projectId: 'kasm-poc-workspace',
     storageBucket: 'kasm-poc-workspace.firebasestorage.app',
@@ -59,11 +59,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCTO9ZIAVhCZHuBPUAv_aj_7rXIPiMxPSA',
-    appId: '1:859713540250:ios:f49fae657d986967a80f23',
+    appId: '1:859713540250:ios:14078141d1e02280a80f23',
     messagingSenderId: '859713540250',
     projectId: 'kasm-poc-workspace',
     storageBucket: 'kasm-poc-workspace.firebasestorage.app',
-    iosBundleId: 'com.example.kasmPocWorkshop',
+    iosBundleId: 'com.poc.kasmWorkshop',
   );
 
 }
