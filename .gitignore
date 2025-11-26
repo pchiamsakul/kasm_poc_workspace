@@ -40,6 +40,7 @@ pubspec.lock
 
 # Generated files
 *.g.dart
+*.gen.dart
 *.freezed.dart
 *.gr.dart
 *.config.dart

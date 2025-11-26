@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:859713540250:android:06f86bafee1ed8e3a80f23",
+        "mobilesdk_app_id": "1:859713540250:android:de2057b218fb786ca80f23",
         "android_client_info": {
-          "package_name": "com.kasm_poc_workspace"
+          "package_name": "com.kasm_poc_workspace.develop"
         }
       },
       "oauth_client": [],

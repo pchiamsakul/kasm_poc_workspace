@@ -27,6 +27,8 @@ subprojects {
                 if (namespace == null) {
                     namespace = namespaceMap[project.name] ?: "com.${project.name.replace("-", "_")}"
                 }
+                // Force all plugins to use the same compile SDK
+                compileSdk = 36
             }
         }
     }

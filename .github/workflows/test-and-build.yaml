@@ -82,12 +82,12 @@ jobs:
       # 15.
       - name: Build APK
         run: |
-          fvm flutter build apk
+          fvm flutter build apk --flavor develop
 
       # 16.
       - name: Flutter build ipa
         run: |
-          fvm flutter build ipa --no-codesign
+          fvm flutter build ipa --flavor develop --no-codesign
 
       # 17.
       - name: Compress Archives and IPAs
