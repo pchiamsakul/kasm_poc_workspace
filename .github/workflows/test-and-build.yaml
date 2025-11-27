@@ -80,26 +80,39 @@ jobs:
           fvm flutter test
 
       # 15.
-      - name: Build APK
+      - name: Build APK (Develop)
         run: |
           fvm flutter build apk --flavor develop
 
       # 16.
-      - name: Flutter build ipa
+      - name: Build IPA (Develop)
         run: |
           fvm flutter build ipa --flavor develop --no-codesign
 
       # 17.
-      - name: Compress Archives and IPAs
+      - name: Compress iOS Build
         run: |
-          cd build
-          tar -czf ios_build.tar.gz ios
+          cd build/ios
+          tar -czf ios-develop-build.tar.gz iphoneos
 
       # 18.
-      - name: Upload Artifacts
+      - name: Upload to Firebase App Distribution (Develop)
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_ANDROID_DEV_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          groups: testers
+          file: build/app/outputs/flutter-apk/app-develop-release.apk
+          releaseNotes: |
+            Build: ${{ github.run_number }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+
+      # 19.
+      - name: Upload Artifacts to GitHub
         uses: actions/upload-artifact@v4
         with:
-          name: Releases
+          name: Build-Artifacts-Develop
           path: |
-            build/app/outputs/flutter-apk/app-release.apk
-            build/ios_build.tar.gz
+            build/app/outputs/flutter-apk/app-develop-release.apk
+            build/ios/ios-develop-build.tar.gz
