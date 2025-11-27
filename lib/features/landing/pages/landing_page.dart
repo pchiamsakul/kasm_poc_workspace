@@ -1,3 +1,4 @@
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:kasm_poc_workspace/i18n/strings.g.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -12,10 +13,14 @@ class LandingPage extends StatefulWidget {
 class _LandingPageState extends State<LandingPage> {
   int _counter = 0;
 
-  void _incrementCounter() {
+  void _incrementCounter() async {
     setState(() {
       _counter++;
     });
+
+    var deviceInfo = await DeviceInfoPlugin().deviceInfo;
+
+    debugPrint('Device Info: ${deviceInfo.data['identifierForVendor']}');
   }
 
   // ignore: unused_element

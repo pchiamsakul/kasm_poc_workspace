@@ -54,6 +54,8 @@ dependencies:
   # Proxy overrides
   system_proxy: ^0.1.0
 
+  device_info_plus: ^12.2.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
