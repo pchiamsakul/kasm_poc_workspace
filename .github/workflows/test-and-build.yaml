@@ -91,9 +91,15 @@ jobs:
 
       # 17.
       - name: Compress iOS Build
+        continue-on-error: true
         run: |
-          cd build/ios
-          tar -czf ios-develop-build.tar.gz iphoneos
+          if [ -d "build/ios" ]; then
+            cd build
+            tar -czf ios-develop-build.tar.gz ios
+            echo "iOS build compressed successfully"
+          else
+            echo "iOS build directory not found, skipping compression"
+          fi
 
       # 18.
       - name: Upload to Firebase App Distribution (Develop)
@@ -109,10 +115,16 @@ jobs:
             Commit: ${{ github.sha }}
 
       # 19.
-      - name: Upload Artifacts to GitHub
+      - name: Upload Android Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Build-Artifacts-Develop
-          path: |
-            build/app/outputs/flutter-apk/app-develop-release.apk
-            build/ios/ios-develop-build.tar.gz
+          name: Android-APK-Develop
+          path: build/app/outputs/flutter-apk/app-develop-release.apk
+
+      # 20.
+      - name: Upload iOS Artifact
+        if: success() && hashFiles('build/ios-develop-build.tar.gz') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: iOS-Build-Develop
+          path: build/ios-develop-build.tar.gz
