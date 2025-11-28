@@ -83,7 +83,7 @@ jobs:
       # 15.
       - name: Build APK (Develop)
         run: |
-          fvm flutter build apk --flavor develop
+          fvm flutter build apk --flavor develop --build-number=${{ github.run_number }}
 
       # 16.
       - name: Build IPA (Develop)
@@ -119,7 +119,7 @@ jobs:
           firebase appdistribution:distribute \
             build/app/outputs/flutter-apk/app-develop-release.apk \
             --app "${{ secrets.FIREBASE_ANDROID_APP_ID }}" \
-            --groups "testers" \
+            --groups "developer" \
             --release-notes "Build: ${{ github.run_number }} | Branch: ${{ github.ref_name }} | Commit: ${{ github.sha }}"
 
           # Clean up credentials file
