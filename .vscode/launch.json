@@ -5,15 +5,15 @@
       "name": "Dev",
       "request": "launch",
       "type": "dart",
-      "program": "lib/main_develop.dart",
-      "args": ["-t", "lib/main.dart"]
+      "program": "lib/main.dart",
+      "args": ["--flavor", "develop", "--dart-define=flavor=develop"]
     },
     {
       "name": "Prod",
       "request": "launch",
       "type": "dart",
-      "program": "lib/main_production.dart",
-      "args": ["-t", "lib/main.dart"]
+      "program": "lib/main.dart",
+      "args": ["--flavor", "production", "--dart-define=flavor=production"]
     }
   ]
 }

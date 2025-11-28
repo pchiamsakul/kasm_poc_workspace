@@ -1,0 +1,127 @@
+# 1.
+name: Build & Deploy (Develop)
+
+# 2.
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+# 3.
+jobs:
+  main:
+    environment: develop
+    runs-on: macos-latest
+
+    # 4.
+    steps:
+      # 5.
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+      # 6.
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '18.x'
+
+      # 7.
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      # 8.
+      - name: Install FVM
+        run: |
+          dart pub global activate fvm
+          echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+
+      # 9.
+      - name: Setup Flutter with FVM
+        run: |
+          fvm install
+          fvm flutter --version
+
+      # 10.
+      - name: Get Flutter packages
+        run: |
+          fvm flutter pub get
+
+      # 11.
+      - name: Run build_runner
+        run: |
+          fvm flutter pub run build_runner build --delete-conflicting-outputs
+
+      # 12.
+      - name: Create environment files
+        run: |
+          echo "API_KEY=${{ secrets.DEV_API_KEY }}" > develop.env
+          echo "API_URL=${{ secrets.DEV_API_URL }}" >> develop.env
+          echo "FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_ANDROID_APP_ID }}" >> develop.env
+
+          echo "API_KEY=${{ secrets.PROD_API_KEY }}" > production.env
+          echo "API_URL=${{ secrets.PROD_API_URL }}" >> production.env
+          echo "FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_ANDROID_APP_ID }}" >> production.env
+
+      # 13.
+      - name: Build APK (Develop)
+        run: |
+          fvm flutter build apk --flavor develop --build-number=${{ github.run_number }}
+
+      # 14.
+      - name: Build IPA (Develop)
+        run: |
+          fvm flutter build ipa --flavor develop --no-codesign
+
+      # 15.
+      - name: Compress iOS Build
+        continue-on-error: true
+        run: |
+          if [ -d "build/ios" ]; then
+            cd build
+            tar -czf ios-develop-build.tar.gz ios
+            echo "iOS build compressed successfully"
+          else
+            echo "iOS build directory not found, skipping compression"
+          fi
+
+      # 16.
+      - name: Setup Firebase CLI
+        run: |
+          curl -sL https://firebase.tools | bash
+
+      # 17.
+      - name: Upload to Firebase App Distribution (Develop)
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-credentials.json
+        run: |
+          # Create service account credentials file
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > ${{ runner.temp }}/firebase-credentials.json
+
+          # Upload to Firebase App Distribution
+          firebase appdistribution:distribute \
+            build/app/outputs/flutter-apk/app-develop-release.apk \
+            --app "${{ secrets.FIREBASE_ANDROID_APP_ID }}" \
+            --groups "developer" \
+            --release-notes "Build: ${{ github.run_number }} | Branch: ${{ github.ref_name }} | Commit: ${{ github.sha }}"
+
+          # Clean up credentials file
+          rm ${{ runner.temp }}/firebase-credentials.json
+
+      # 18.
+      - name: Upload Android Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Android-APK-Develop
+          path: build/app/outputs/flutter-apk/app-develop-release.apk
+
+      # 19.
+      - name: Upload iOS Artifact
+        if: success() && hashFiles('build/ios-develop-build.tar.gz') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: iOS-Build-Develop
+          path: build/ios-develop-build.tar.gz

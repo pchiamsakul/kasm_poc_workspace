@@ -12,9 +12,7 @@
   "editor.selectionHighlight": false,
   "debug.allowBreakpointsEverywhere": true,
   "dart.debugSdkLibraries": true,
-  "editor.rulers": [
-    100
-  ],
+  "editor.rulers": [100],
   "dart.lineLength": 100,
   "dart.analysisExcludedFolders": [
     "lib/generated/intl",
@@ -26,17 +24,11 @@
     "build"
   ],
   "dart.flutterHotReloadOnSave": "all",
-  "dart.flutterSdkPaths": [
-    ".fvm/flutter_sdk"
-  ],
+  "dart.flutterSdkPaths": [".fvm/flutter_sdk"],
   "search.exclude": {
     "**/.fvm": true
   },
   "task.autoDetect": "off",
   "task.quickOpen.history": 0,
-  "dart.flutterTestAdditionalArgs": [
-    "--flavor",
-    "develop"
-  ],
-  "dart.flutterSdkPath": ".fvm/versions/3.32.8"
+  "dart.flutterTestAdditionalArgs": ["--flavor", "develop"]
 }
