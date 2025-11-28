@@ -1,0 +1,75 @@
+# 1.
+name: Pull Request
+
+# 2.
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+
+# 3.
+jobs:
+  main:
+    runs-on: macos-latest
+
+    # 4.
+    steps:
+      # 5.
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+      # 6.
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '18.x'
+
+      # 7.
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      # 8.
+      - name: Install FVM
+        run: |
+          dart pub global activate fvm
+          echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+
+      # 9.
+      - name: Setup Flutter with FVM
+        run: |
+          fvm install
+          fvm flutter --version
+
+      # 10.
+      - name: Get Flutter packages
+        run: |
+          fvm flutter pub get
+
+      # 11.
+      - name: Run build_runner
+        run: |
+          fvm flutter pub run build_runner build --delete-conflicting-outputs
+
+      # 12.
+      - name: Create environment files
+        run: |
+          echo "API_KEY=${{ secrets.DEV_API_KEY }}" > develop.env
+          echo "API_URL=${{ secrets.DEV_API_URL }}" >> develop.env
+          echo "FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_ANDROID_APP_ID }}" >> develop.env
+
+          echo "API_KEY=${{ secrets.PROD_API_KEY }}" > production.env
+          echo "API_URL=${{ secrets.PROD_API_URL }}" >> production.env
+          echo "FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_ANDROID_APP_ID }}" >> production.env
+      # 13.
+      - name: Run Analyse
+        run: |
+          fvm flutter analyze
+
+      # 14.
+      - name: Run Tests
+        run: |
+          fvm flutter test
