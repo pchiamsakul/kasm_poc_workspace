@@ -64,11 +64,11 @@ jobs:
         run: |
           echo "API_KEY=${{ secrets.DEV_API_KEY }}" > develop.env
           echo "API_URL=${{ secrets.DEV_API_URL }}" >> develop.env
-          echo "FIREBASE_PROJECT_ID=${{ secrets.DEV_FIREBASE_PROJECT_ID }}" >> develop.env
+          echo "FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_ANDROID_APP_ID }}" >> develop.env
 
           echo "API_KEY=${{ secrets.PROD_API_KEY }}" > production.env
           echo "API_URL=${{ secrets.PROD_API_URL }}" >> production.env
-          echo "FIREBASE_PROJECT_ID=${{ secrets.PROD_FIREBASE_PROJECT_ID }}" >> production.env
+          echo "FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_ANDROID_APP_ID }}" >> production.env
 
       # 13.
       - name: Check for lints
@@ -118,7 +118,7 @@ jobs:
           # Upload to Firebase App Distribution
           firebase appdistribution:distribute \
             build/app/outputs/flutter-apk/app-develop-release.apk \
-            --app "${{ secrets.FIREBASE_ANDROID_DEV_APP_ID }}" \
+            --app "${{ secrets.FIREBASE_ANDROID_APP_ID }}" \
             --groups "testers" \
             --release-notes "Build: ${{ github.run_number }} | Branch: ${{ github.ref_name }} | Commit: ${{ github.sha }}"
 

@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAC3eNLs9sjDLx-MyfGK44NxJeLtnqCQxw',
-    appId: '1:859713540250:android:6e56e0cd5cf97304a80f23',
+    appId: '1:859713540250:android:eeb76fd476795917a80f23',
     messagingSenderId: '859713540250',
     projectId: 'kasm-poc-workspace',
     storageBucket: 'kasm-poc-workspace.firebasestorage.app',
@@ -59,7 +59,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCTO9ZIAVhCZHuBPUAv_aj_7rXIPiMxPSA',
-    appId: '1:859713540250:ios:14078141d1e02280a80f23',
+    appId: '1:859713540250:ios:b7a1262250e2b657a80f23',
     messagingSenderId: '859713540250',
     projectId: 'kasm-poc-workspace',
     storageBucket: 'kasm-poc-workspace.firebasestorage.app',
