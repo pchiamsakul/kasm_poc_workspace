@@ -1,12 +1,8 @@
 # 1.
-name: Test & Build
+name: Build & Deploy (Develop)
 
 # 2.
 on:
-  pull_request:
-    branches:
-      - main
-      - dev
   push:
     branches:
       - main
@@ -71,26 +67,16 @@ jobs:
           echo "FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_ANDROID_APP_ID }}" >> production.env
 
       # 13.
-      - name: Check for lints
-        run: |
-          fvm flutter analyze
-
-      # 14.
-      - name: Run all tests
-        run: |
-          fvm flutter test
-
-      # 15.
       - name: Build APK (Develop)
         run: |
           fvm flutter build apk --flavor develop --build-number=${{ github.run_number }}
 
-      # 16.
+      # 14.
       - name: Build IPA (Develop)
         run: |
           fvm flutter build ipa --flavor develop --no-codesign
 
-      # 17.
+      # 15.
       - name: Compress iOS Build
         continue-on-error: true
         run: |
@@ -102,12 +88,12 @@ jobs:
             echo "iOS build directory not found, skipping compression"
           fi
 
-      # 18.
+      # 16.
       - name: Setup Firebase CLI
         run: |
           curl -sL https://firebase.tools | bash
 
-      # 19.
+      # 17.
       - name: Upload to Firebase App Distribution (Develop)
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-credentials.json
@@ -125,14 +111,14 @@ jobs:
           # Clean up credentials file
           rm ${{ runner.temp }}/firebase-credentials.json
 
-      # 20.
+      # 18.
       - name: Upload Android Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Android-APK-Develop
           path: build/app/outputs/flutter-apk/app-develop-release.apk
 
-      # 21.
+      # 19.
       - name: Upload iOS Artifact
         if: success() && hashFiles('build/ios-develop-build.tar.gz') != ''
         uses: actions/upload-artifact@v4
