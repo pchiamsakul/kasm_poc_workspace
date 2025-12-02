@@ -1,0 +1,12 @@
+
+
+# Config
+input_directory: assets/i18n
+input_file_pattern: .i18n.json
+base_locale: th
+fallback_strategy: base_locale
+locale_handling: true
+
+output_directory: lib/i18n
+output_file_name: strings.g.dart
+output_format: single_file

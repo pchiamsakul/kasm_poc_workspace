@@ -6,6 +6,6 @@ import 'app.dart';
 import 'environment_config.dart';
 
 void main() async {
-  await Init.instance.initialize(EnvironmentType.prod);
+  await Init.instance.initialize(EnvironmentType.uat);
   runApp(TranslationProvider(child: const ThemeApp()));
 }
