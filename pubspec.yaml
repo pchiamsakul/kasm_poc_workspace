@@ -26,6 +26,7 @@ dependencies:
   intl: ^0.20.2
   url_launcher: ^6.3.2
   animations: ^2.0.11
+  carousel_slider: ^5.1.1
 
   # Networking & Connectivity
   http: ^1.1.2
@@ -102,6 +103,7 @@ flutter:
     - assets/logos/
     - assets/json/
     - assets/fonts/
+    - assets/svg/
     - lib/features/wifi/presentations/
 
 flutter_gen:

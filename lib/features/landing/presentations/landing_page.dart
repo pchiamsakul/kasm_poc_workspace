@@ -1,6 +1,8 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
+import 'package:kasm_poc_workspace/app/app_module.dart';
+import 'package:kasm_poc_workspace/core/routers/app_navigator.dart';
 import 'package:kasm_poc_workspace/core/routers/navable.dart';
 import 'package:kasm_poc_workspace/core/routers/router_name.dart';
 import 'package:kasm_poc_workspace/gen/strings.g.dart';
@@ -8,7 +10,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 @Named(RouterName.MainPage)
 @Injectable(as: NavAble)
-class LandingNavigator implements NavAble {
+class LandingNavigator
+    implements NavAble {
   @override
   Widget get(argument) => const LandingPage();
 }
@@ -22,6 +25,14 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
   int _counter = 0;
+  late final AppNavigator _appNavigator;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _appNavigator = getIt<AppNavigator>();
+  }
 
   void _incrementCounter() async {
     setState(() {
@@ -47,10 +58,10 @@ class _LandingPageState extends State<LandingPage> {
 
     final authUrl = Uri.parse(
       "https://id.singpass.gov.sg/auth"
-      "?response_type=code"
-      "&client_id=$clientId"
-      "&redirect_uri=$encodedRedirectUri"
-      "&scope=$encodedScope",
+          "?response_type=code"
+          "&client_id=$clientId"
+          "&redirect_uri=$encodedRedirectUri"
+          "&scope=$encodedScope",
       // "&state=$state"
       // "&nonce=$nonce",
     );
@@ -62,20 +73,53 @@ class _LandingPageState extends State<LandingPage> {
     }
   }
 
+  Widget buttonScreen(String route) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Column(
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () => _appNavigator.pushNamed(route),
+            child: Text(route.replaceAll('/', '')),
+          ),
+          SizedBox(height: 8),
+          const Divider(height: 1, color: Colors.grey),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme
+            .of(context)
+            .colorScheme
+            .inversePrimary,
 
         title: Text(t.app_name),
       ),
-      body: Center(
+      body: Container(
+        padding: EdgeInsets.all(16),
+        alignment: Alignment.center,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text('You have pushed the button this many times:'),
-            Text('$_counter', style: Theme.of(context).textTheme.headlineMedium),
+            Text('$_counter', style: Theme
+                .of(context)
+                .textTheme
+                .headlineMedium),
+            ExpansionTile(
+              shape: const Border(),
+              collapsedShape: const Border(),
+              title: Text('Mockup Screen'),
+              children: <Widget>[
+                const Divider(height: 1, color: Colors.grey),
+                buttonScreen(RouterName.PocWifiPage),
+              ],
+            ),
           ],
         ),
       ),
