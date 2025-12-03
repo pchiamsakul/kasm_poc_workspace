@@ -102,6 +102,7 @@ class _LandingPageState extends State<LandingPage> {
               children: <Widget>[
                 const Divider(height: 1, color: Colors.grey),
                 buttonScreen(RouterName.homePage),
+                buttonScreen(RouterName.activityPage),
               ],
             ),
           ],
