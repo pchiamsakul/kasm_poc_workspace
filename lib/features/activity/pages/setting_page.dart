@@ -28,6 +28,14 @@ class _SettingPageState extends State<SettingPage> {
   final viewModel2 = getIt<SettingViewModel2>();
 
   @override
+  void initState() {
+    super.initState();
+    viewModel.publishStream.listen((event) {
+      // show popup
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Provider(
       value: viewModel,
@@ -38,7 +46,7 @@ class _SettingPageState extends State<SettingPage> {
             child: Column(
               children: [
                 InkWell(onTap: () => viewModel.goToHome(), child: Text("Setting Page")),
-                SettingItemWidget(title: "change language", ),
+                SettingItemWidget(title: "change language"),
               ],
             ),
           ),

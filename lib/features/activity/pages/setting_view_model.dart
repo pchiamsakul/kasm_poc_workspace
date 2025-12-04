@@ -12,6 +12,9 @@ class SettingViewModel extends BaseViewModel {
   
   late final BehaviorSubject<String> behavior = BehaviorSubject.seeded(title);
   late final PublishSubject<String> publishStream = PublishSubject();
+  // popup
+  // navigation
+  // show error message
 
   final GetActivityUsecase getActivityUsecase;
 
