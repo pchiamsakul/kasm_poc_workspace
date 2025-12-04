@@ -5,7 +5,7 @@ import 'package:kasm_poc_workspace/core/routers/navable.dart';
 import 'package:kasm_poc_workspace/core/routers/router_name.dart';
 import 'package:kasm_poc_workspace/gen/assets.gen.dart';
 
-@Named(RouterName.HomePAge)
+@Named(RouterName.HomePage)
 @Injectable(as: NavAble)
 class HomeNavigator implements NavAble {
   @override

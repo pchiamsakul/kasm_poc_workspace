@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
+import 'package:kasm_poc_workspace/app/app_module.dart';
+import 'package:kasm_poc_workspace/core/routers/app_navigator.dart';
 import 'package:kasm_poc_workspace/core/routers/navable.dart';
 import 'package:kasm_poc_workspace/core/routers/router_name.dart';
 
@@ -18,8 +20,17 @@ class ActivityPage extends StatefulWidget {
 }
 
 class _ActivityPageState extends State<ActivityPage> {
+
+  final _appNavigator = getIt<AppNavigator>();
+
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      body: Center(
+        child: InkWell(onTap: () {
+          _appNavigator.pushNamed(RouterName.SettingPage);
+        }, child: Text("I am Activity Page")),
+      ),
+    );
   }
 }
