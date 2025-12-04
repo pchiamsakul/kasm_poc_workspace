@@ -37,11 +37,15 @@ android {
     productFlavors {
         create("develop") {
             dimension = "default"
-            applicationIdSuffix = ".develop"
+            applicationIdSuffix = ".dev"
+        }
+
+        create("uat") {
+            dimension = "default"
+            applicationIdSuffix = ".uat"
         }
         create("production") {
             dimension = "default"
-            applicationIdSuffix = ".production"
         }
     }
 

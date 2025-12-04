@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kasm_poc_workspace/features/landing/pages/landing_page.dart';
-import 'package:kasm_poc_workspace/i18n/strings.g.dart';
+import 'package:kasm_poc_workspace/features/landing/presentations/landing_page.dart';
+import 'package:kasm_poc_workspace/gen/strings.g.dart';
 
 void main() {
   testWidgets('LandingPage counter increments test', (WidgetTester tester) async {
