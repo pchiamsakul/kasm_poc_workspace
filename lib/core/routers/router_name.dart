@@ -6,6 +6,8 @@ class RouterName {
   static const NavPrefix = "";
   static const MainPage = "${NavPrefix}main";
   static const PocWifiPage = "${NavPrefix}poc-wifi";
+  static const HomePAge = "${NavPrefix}home";
+  static const ActivityPage = "${NavPrefix}activity";
 
   static const NotFoundPage = "${NavPrefix}not-found";
 }
