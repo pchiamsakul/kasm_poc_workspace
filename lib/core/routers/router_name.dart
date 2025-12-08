@@ -10,6 +10,7 @@ class RouterName {
   static const ActivityPage = "${NavPrefix}activity";
   static const SettingPage = "${NavPrefix}setting";
   static const OnboardingPage = "${NavPrefix}onboarding";
+  static const WelcomePage = "${NavPrefix}welcome";
 
   static const NotFoundPage = "${NavPrefix}not-found";
 }

@@ -97,7 +97,7 @@ flutter:
   assets:
     - develop.env
     - uat.env
-    - production.env
+    - prod.env
     - assets/images/
     - assets/icons/
     - assets/logos/

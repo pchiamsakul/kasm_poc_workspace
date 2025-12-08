@@ -114,6 +114,7 @@ class _LandingPageState extends State<LandingPage> {
                 buttonScreen(RouterName.HomePage),
                 buttonScreen(RouterName.ActivityPage),
                 buttonScreen(RouterName.OnboardingPage),
+                buttonScreen(RouterName.WelcomePage),
               ],
             ),
           ],

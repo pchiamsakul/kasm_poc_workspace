@@ -5,6 +5,7 @@ import 'package:kasm_poc_workspace/core/routers/app_navigator.dart';
 import 'package:kasm_poc_workspace/core/routers/navable.dart';
 import 'package:kasm_poc_workspace/core/routers/router_name.dart';
 import 'package:kasm_poc_workspace/features/onboarding/data/model/onboarding_model.dart';
+import 'package:kasm_poc_workspace/features/onboarding/presentation/widget/common_primary_button_widget.dart';
 import 'package:kasm_poc_workspace/features/onboarding/presentation/widget/onboarding_dot_indicator_widget.dart';
 import 'package:kasm_poc_workspace/generated/assets.gen.dart';
 
@@ -131,21 +132,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     inactiveColor: Colors.black26,
                   ),
                   const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _goNext,
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-                      ),
-                      child: Text(
-                        isLast ? 'GET STARTED' : 'NEXT',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-                      ), // Dakoow Neue Plak Font to update
-                    ),
+                  CommonPrimaryButtonWidget(
+                    text: isLast ? 'GET STARTED' : 'NEXT',
+                    onPressed: _goNext,
                   ),
                 ],
               ),
