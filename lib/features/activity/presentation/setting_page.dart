@@ -4,8 +4,8 @@ import 'package:kasm_poc_workspace/app/app_module.dart';
 import 'package:kasm_poc_workspace/core/helper/provider.dart';
 import 'package:kasm_poc_workspace/core/routers/navable.dart';
 import 'package:kasm_poc_workspace/core/routers/router_name.dart';
-import 'package:kasm_poc_workspace/features/activity/pages/setting_view_model.dart';
-import 'package:kasm_poc_workspace/features/activity/pages/widget/setting_item_widget.dart';
+import 'package:kasm_poc_workspace/features/activity/presentation/setting_view_model.dart';
+import 'package:kasm_poc_workspace/features/activity/presentation/widget/setting_item_widget.dart';
 
 @Named(RouterName.SettingPage)
 @Injectable(as: NavAble)

@@ -9,14 +9,13 @@ class RouterName {
   static const HomePage = "${NavPrefix}home";
   static const ActivityPage = "${NavPrefix}activity";
   static const SettingPage = "${NavPrefix}setting";
+  static const OnboardingPage = "${NavPrefix}onboarding";
 
   static const NotFoundPage = "${NavPrefix}not-found";
 }
 
 class RouterPage {
-  static const nonLoginList = <String>[
-  ];
+  static const nonLoginList = <String>[];
 
-  static const customerList = <String>[
-  ];
+  static const customerList = <String>[];
 }
