@@ -1,8 +1,11 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
+import 'package:kasm_poc_workspace/app/app_module.dart';
 import 'package:kasm_poc_workspace/core/routers/navable.dart';
 import 'package:kasm_poc_workspace/core/routers/router_name.dart';
+import 'package:kasm_poc_workspace/core/widget/button.dart';
+import 'package:kasm_poc_workspace/features/home/page/home_view_model.dart';
 import 'package:kasm_poc_workspace/generated/assets.gen.dart';
 
 @Named(RouterName.HomePage)
@@ -20,6 +23,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final viewModel = getIt<HomeViewModel>();
+
   int _currentIndex = 0;
   final List<int> _carouselItems = [1, 2, 3, 4, 5];
 
@@ -27,6 +32,33 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Expanded(child: Text('Are you in The Kallang Stadium?')),
+                    Button(title: 'Yes', onPressed: viewModel.connectWifi),
+                  ],
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(child: carousel()),
+            SliverToBoxAdapter(child: Text('Home')),
+          ],
+        ),
+      ),
+    );
+  }
+
+
 
   Widget carousel() {
     return CarouselSlider(
@@ -102,10 +134,5 @@ class _HomePageState extends State<HomePage> {
         );
       }).toList(),
     );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(body: Column(children: <Widget>[carousel(), Text('Home')]));
   }
 }
