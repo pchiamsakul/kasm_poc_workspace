@@ -4,7 +4,6 @@ import 'package:kasm_poc_workspace/app/app_module.dart';
 import 'package:kasm_poc_workspace/core/routers/app_navigator.dart';
 import 'package:kasm_poc_workspace/core/routers/navable.dart';
 import 'package:kasm_poc_workspace/core/routers/router_name.dart';
-import 'package:kasm_poc_workspace/features/mock/mockup_page.dart';
 import 'package:kasm_poc_workspace/features/onboarding/presentation/widget/common_primary_button_widget.dart';
 import 'package:kasm_poc_workspace/features/welcome/presentation/widget/common_secondary_button_widget.dart';
 import 'package:kasm_poc_workspace/generated/assets.gen.dart';
@@ -70,13 +69,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       CommonPrimaryButtonWidget(
                         text: 'I\'M NEW, SIGN ME UP',
                         onPressed: () {
-                          _appNavigator.pushNamed(
-                            RouterName.MockupPage,
-                            argument: MockupPageArguments(
-                              "Signup Web Site",
-                              RouterName.WelcomePage,
-                            ),
-                          );
+                          _appNavigator.pushNamed(RouterName.SignupPage);
                         }, // Dakoow to replace
                       ),
                       const SizedBox(height: 12),
