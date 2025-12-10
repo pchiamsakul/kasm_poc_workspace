@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:kasm_poc_workspace/core/routers/navable.dart';
 import 'package:kasm_poc_workspace/core/routers/router_name.dart';
-import 'package:kasm_poc_workspace/gen/assets.gen.dart';
+import 'package:kasm_poc_workspace/generated/assets.gen.dart';
 
 @Named(RouterName.HomePage)
 @Injectable(as: NavAble)

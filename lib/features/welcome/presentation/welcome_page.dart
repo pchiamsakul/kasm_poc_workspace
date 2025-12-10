@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
+import 'package:kasm_poc_workspace/app/app_module.dart';
+import 'package:kasm_poc_workspace/core/routers/app_navigator.dart';
 import 'package:kasm_poc_workspace/core/routers/navable.dart';
 import 'package:kasm_poc_workspace/core/routers/router_name.dart';
+import 'package:kasm_poc_workspace/features/mock/mockup_page.dart';
 import 'package:kasm_poc_workspace/features/onboarding/presentation/widget/common_primary_button_widget.dart';
 import 'package:kasm_poc_workspace/features/welcome/presentation/widget/common_secondary_button_widget.dart';
 import 'package:kasm_poc_workspace/generated/assets.gen.dart';
@@ -21,6 +24,8 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
+  final _appNavigator = getIt<AppNavigator>();
+
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -32,8 +37,8 @@ class _WelcomePageState extends State<WelcomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Assets.images.logo
-                  .image(), // Dakoow to replace with powered_by_deloitte_logo when i find how to generate the path
+              Assets.images.logo.image(),
+              // Dakoow to replace with powered_by_deloitte_logo when i find how to generate the path
               const SizedBox(height: 24),
               Expanded(
                 child: Center(
@@ -64,27 +69,39 @@ class _WelcomePageState extends State<WelcomePage> {
                       const Spacer(),
                       CommonPrimaryButtonWidget(
                         text: 'I\'M NEW, SIGN ME UP',
-                        onPressed: () {}, // Dakoow to replace
+                        onPressed: () {
+                          _appNavigator.pushNamed(
+                            RouterName.MockupPage,
+                            argument: MockupPageArguments(
+                              "Signup Web Site",
+                              RouterName.WelcomePage,
+                            ),
+                          );
+                        }, // Dakoow to replace
                       ),
                       const SizedBox(height: 12),
-                      CommonSecondaryButtonWidget(text: 'LOGIN', onPressed: () {}),
+                      CommonSecondaryButtonWidget(
+                        text: 'LOGIN',
+                        onPressed: () {
+                          _appNavigator.pushNamedAndRemoveAll(RouterName.HomePage);
+                        },
+                      ),
                       const SizedBox(height: 12),
                       TextButton(
-                        onPressed: () {},
-                        child: TextButton(
-                          onPressed: () {},
-                          style: TextButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            minimumSize: const Size(0, 0),
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          child: const Text(
-                            "Continue as guest",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.black,
-                            ),
+                        onPressed: () {
+                          _appNavigator.pushNamedAndRemoveAll(RouterName.HomePage);
+                        },
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: const Size(0, 0),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: const Text(
+                          "Continue as guest",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
                           ),
                         ),
                       ),

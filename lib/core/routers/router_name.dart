@@ -13,6 +13,7 @@ class RouterName {
   static const WelcomePage = "${NavPrefix}welcome";
 
   static const NotFoundPage = "${NavPrefix}not-found";
+  static const MockupPage = "${NavPrefix}mock-up";
 }
 
 class RouterPage {

@@ -5,7 +5,7 @@ import 'package:kasm_poc_workspace/app/app_module.dart';
 import 'package:kasm_poc_workspace/core/routers/app_navigator.dart';
 import 'package:kasm_poc_workspace/core/routers/navable.dart';
 import 'package:kasm_poc_workspace/core/routers/router_name.dart';
-import 'package:kasm_poc_workspace/gen/strings.g.dart';
+import 'package:kasm_poc_workspace/i18n/strings.g.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 @Named(RouterName.MainPage)

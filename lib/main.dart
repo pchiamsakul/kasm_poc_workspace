@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kasm_poc_workspace/core/base/init.dart';
-import 'package:kasm_poc_workspace/gen/strings.g.dart';
+import 'package:kasm_poc_workspace/generated/strings.g.dart';
 
 import 'app.dart';
 import 'environment_config.dart';

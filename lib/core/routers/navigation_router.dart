@@ -13,7 +13,7 @@ class NavigationRouter {
       var routName = settings.name ?? "/";
       var appNavigatorConfiguration = settings.arguments as AppNavigatorConfiguration?;
       if (routName == "/") {
-        routName = RouterName.MainPage;
+        routName = RouterName.OnboardingPage;
       }
 
       if (settings.arguments == null && appNavigatorConfiguration == null) {
