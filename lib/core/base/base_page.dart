@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kasm_poc_workspace/app/app_module.dart';
 import 'package:kasm_poc_workspace/core/base/base_view_model.dart';
 import 'package:kasm_poc_workspace/core/helper/provider.dart';
-import 'package:kasm_poc_workspace/gen/strings.g.dart';
+import 'package:kasm_poc_workspace/generated/strings.g.dart';
 import 'package:rxdart/rxdart.dart';
 
 abstract class BasePage<VM extends BaseViewModel, T extends StatefulWidget> extends State<T>

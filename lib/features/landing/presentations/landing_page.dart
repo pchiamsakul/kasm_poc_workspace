@@ -5,7 +5,7 @@ import 'package:kasm_poc_workspace/app/app_module.dart';
 import 'package:kasm_poc_workspace/core/routers/app_navigator.dart';
 import 'package:kasm_poc_workspace/core/routers/navable.dart';
 import 'package:kasm_poc_workspace/core/routers/router_name.dart';
-import 'package:kasm_poc_workspace/i18n/strings.g.dart';
+import 'package:kasm_poc_workspace/generated/strings.g.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 @Named(RouterName.MainPage)
@@ -100,10 +100,7 @@ class _LandingPageState extends State<LandingPage> {
         padding: EdgeInsets.all(16),
         alignment: Alignment.center,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text('$_counter', style: Theme.of(context).textTheme.headlineMedium),
             ExpansionTile(
               shape: const Border(),
               collapsedShape: const Border(),
@@ -112,6 +109,7 @@ class _LandingPageState extends State<LandingPage> {
                 const Divider(height: 1, color: Colors.grey),
                 buttonScreen(RouterName.PocWifiPage),
                 buttonScreen(RouterName.HomePage),
+                buttonScreen(RouterName.SignupPage),
                 buttonScreen(RouterName.ActivityPage),
                 buttonScreen(RouterName.OnboardingPage),
                 buttonScreen(RouterName.WelcomePage),
