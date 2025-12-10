@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-enum EnvironmentType { dev, uat, prod }
+enum EnvironmentType { develop, staging, production }
 
 class EnvironmentConfig {
   final EnvironmentType _type;

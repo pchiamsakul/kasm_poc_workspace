@@ -60,9 +60,9 @@ dependencies:
   device_info_plus: ^12.2.0
 
   # Firebase
-#  firebase_core: ^4.1.0
-#  firebase_analytics: ^12.0.1d
-#  firebase_remote_config: ^6.0.1
+  #  firebase_core: ^4.1.0
+  #  firebase_analytics: ^12.0.1d
+  #  firebase_remote_config: ^6.0.1
 
   # Translation
   slang: ^4.7.3
@@ -96,8 +96,8 @@ flutter:
   uses-material-design: true
   assets:
     - develop.env
-    - uat.env
-    - prod.env
+    - staging.env
+    - production.env
     - assets/images/
     - assets/icons/
     - assets/logos/
@@ -112,5 +112,5 @@ flutter_gen:
   assets:
     exclude:
       - develop.env
-      - uat.env
+      - staging.env
       - production.env
