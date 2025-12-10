@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kasm_poc_workspace/core/helper/provider.dart';
-import 'package:kasm_poc_workspace/features/activity/pages/setting_view_model.dart';
+import 'package:kasm_poc_workspace/features/activity/presentation/setting_view_model.dart';
 
 class SettingItemWidget extends StatelessWidget {
   final String title;

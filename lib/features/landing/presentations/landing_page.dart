@@ -10,8 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 @Named(RouterName.MainPage)
 @Injectable(as: NavAble)
-class LandingNavigator
-    implements NavAble {
+class LandingNavigator implements NavAble {
   @override
   Widget get(argument) => const LandingPage();
 }
@@ -58,10 +57,10 @@ class _LandingPageState extends State<LandingPage> {
 
     final authUrl = Uri.parse(
       "https://id.singpass.gov.sg/auth"
-          "?response_type=code"
-          "&client_id=$clientId"
-          "&redirect_uri=$encodedRedirectUri"
-          "&scope=$encodedScope",
+      "?response_type=code"
+      "&client_id=$clientId"
+      "&redirect_uri=$encodedRedirectUri"
+      "&scope=$encodedScope",
       // "&state=$state"
       // "&nonce=$nonce",
     );
@@ -93,10 +92,7 @@ class _LandingPageState extends State<LandingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme
-            .of(context)
-            .colorScheme
-            .inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
 
         title: Text(t.app_name),
       ),
@@ -107,10 +103,7 @@ class _LandingPageState extends State<LandingPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text('You have pushed the button this many times:'),
-            Text('$_counter', style: Theme
-                .of(context)
-                .textTheme
-                .headlineMedium),
+            Text('$_counter', style: Theme.of(context).textTheme.headlineMedium),
             ExpansionTile(
               shape: const Border(),
               collapsedShape: const Border(),
@@ -120,6 +113,8 @@ class _LandingPageState extends State<LandingPage> {
                 buttonScreen(RouterName.PocWifiPage),
                 buttonScreen(RouterName.HomePage),
                 buttonScreen(RouterName.ActivityPage),
+                buttonScreen(RouterName.OnboardingPage),
+                buttonScreen(RouterName.WelcomePage),
               ],
             ),
           ],
