@@ -1,9 +1,3 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-
-part 'wifi_connection_state.freezed.dart';
-
-part 'wifi_connection_state.g.dart';
-
 /// Enum representing WiFi connection status
 enum WifiConnectionStatus {
   /// WiFi is connected
