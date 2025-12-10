@@ -106,7 +106,7 @@ flutter:
     - lib/features/wifi/presentations/
 
 flutter_gen:
-  output: lib/gen/
+  output: lib/generated/
   integrations:
     flutter_svg: true
   assets:

@@ -32,8 +32,8 @@ class _WelcomePageState extends State<WelcomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Assets.images.logo
-                  .image(), // Dakoow to replace with powered_by_deloitte_logo when i find how to generate the path
+              Assets.images.logo.image(),
+              // Dakoow to replace with powered_by_deloitte_logo when i find how to generate the path
               const SizedBox(height: 24),
               Expanded(
                 child: Center(
