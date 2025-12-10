@@ -11,6 +11,7 @@ class RouterName {
   static const SettingPage = "${NavPrefix}setting";
   static const OnboardingPage = "${NavPrefix}onboarding";
   static const WelcomePage = "${NavPrefix}welcome";
+  static const SignupPage = "${NavPrefix}signup";
 
   static const NotFoundPage = "${NavPrefix}not-found";
   static const MockupPage = "${NavPrefix}mock-up";
