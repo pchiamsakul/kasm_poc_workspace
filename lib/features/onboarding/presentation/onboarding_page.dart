@@ -130,7 +130,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   ),
                   const SizedBox(height: 16),
                   CommonPrimaryButtonWidget(
-                    text: isLast ? 'GET STARTED TMP Activity' : 'NEXT',
+                    text: isLast ? 'GET STARTED' : 'NEXT',
                     onPressed: _goNext,
                   ),
                 ],
