@@ -5,6 +5,7 @@ import 'package:kasm_poc_workspace/core/constant/k_color.dart';
 import 'package:kasm_poc_workspace/core/routers/app_navigator.dart';
 import 'package:kasm_poc_workspace/core/routers/navable.dart';
 import 'package:kasm_poc_workspace/core/routers/router_name.dart';
+import 'package:kasm_poc_workspace/core/widget/toast_utils.dart';
 import 'package:kasm_poc_workspace/features/home/page/home_view_model.dart';
 import 'package:kasm_poc_workspace/features/home/widget/open_wifi_setting_sheet.dart';
 import 'package:kasm_poc_workspace/generated/assets.gen.dart';
@@ -47,6 +48,9 @@ class _HomePageState extends AppNavigatorListenState<HomePage, HomeViewModel> {
     super.initState();
     viewModel.initialize();
 
+    viewModel.showSuccessConnectWifi.listen((wifiName) {
+      ToastUtils.showSuccess(context, message: "Connected $wifiName Wi-Fi");
+    });
     viewModel.shouldShowWifiBadge.listen((show) {
       if (mounted) {
         setState(() {

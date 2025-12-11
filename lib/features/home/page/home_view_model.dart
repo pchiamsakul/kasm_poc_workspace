@@ -1,7 +1,9 @@
 import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
 import 'package:kasm_poc_workspace/core/base/base_view_model.dart';
+import 'package:kasm_poc_workspace/core/base/core_platform.dart';
 import 'package:kasm_poc_workspace/core/helper/continuation.dart';
+import 'package:kasm_poc_workspace/core/widget/toast_utils.dart';
 import 'package:kasm_poc_workspace/features/wifi/domain/models/wifi_connection_state.dart';
 import 'package:kasm_poc_workspace/features/wifi/domain/services/wifi_service.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -13,6 +15,7 @@ class HomeViewModel extends BaseViewModel {
 
   HomeViewModel(this._wifiService);
 
+  final PublishSubject<String> showSuccessConnectWifi = PublishSubject();
   final BehaviorSubject<bool> shouldShowWifiBadge = BehaviorSubject.seeded(true);
   final Continuation<bool> showWifiTurnOffSuggestion = Continuation();
   final BehaviorSubject<WifiConnectionStatus> wifiConnectionStatus = BehaviorSubject.seeded(
@@ -46,12 +49,14 @@ class HomeViewModel extends BaseViewModel {
       final locationStatus = await Permission.location.status;
       isLocationEnabled.add(locationStatus.isGranted);
 
-      // Check if WiFi is enabled
-      final isWifiEnabled = await _wifiService.isWifiEnabled();
+      if (CorePlatform.isAndroid) {
+        // Check if WiFi is enabled
+        final isWifiEnabled = await _wifiService.isWifiEnabled();
 
-      if (!isWifiEnabled) {
-        wifiConnectionStatus.add(WifiConnectionStatus.disabled);
-        return;
+        if (!isWifiEnabled) {
+          wifiConnectionStatus.add(WifiConnectionStatus.disabled);
+          return;
+        }
       }
 
       // Check if connected to WiFi
@@ -109,28 +114,17 @@ class HomeViewModel extends BaseViewModel {
         // Show settings dialog
         _showLocationSettingsDialog();
       } else {
-        showToast('Location permission is required to connect to WiFi.');
+        showToast('Location permission is required to connect to WiFi.', ToastType.error);
       }
     } catch (e) {
-      showToast('Failed to request location permission.');
+      showToast('Failed to request location permission.', ToastType.error);
     }
   }
 
   Future<void> _connectToKallangWifi() async {
     try {
       wifiConnectionStatus.add(WifiConnectionStatus.connecting);
-
-      // Check if WiFi is enabled first
-      final isWifiEnabled = await _wifiService.isWifiEnabled();
-      if (!isWifiEnabled) {
-        // Try to enable WiFi
-        await _wifiService.setWifiEnabled(true);
-        // Wait a moment for WiFi to turn on
-        await Future.delayed(Duration(seconds: 2));
-      }
-
-      // Simulate connecting to "Kallang_Free_WiFi" (replace with actual SSID)
-      const kallangSSID = 'Kallang_Free_WiFi';
+      const kallangSSID = 'Suraking_Guest';
 
       final success = await _wifiService.connectToWifi(
         ssid: kallangSSID,
@@ -142,21 +136,20 @@ class HomeViewModel extends BaseViewModel {
         wifiConnectionStatus.add(WifiConnectionStatus.connected);
         connectedNetworkName.add(kallangSSID);
         shouldShowWifiBadge.add(false); // Hide banner on successful connection
-        showToast('Successfully connected to Kallang WiFi!');
+        showToast(kallangSSID, ToastType.success);
       } else {
         wifiConnectionStatus.add(WifiConnectionStatus.failed);
-        showToast('Failed to connect to Kallang WiFi. Please try again.');
+        showToast('Failed to connect to Kallang WiFi. Please try again.', ToastType.error);
       }
     } catch (e) {
       wifiConnectionStatus.add(WifiConnectionStatus.failed);
-      showToast('Connection failed: ${e.toString()}');
-    } finally {
-    }
+      showToast('Connection failed: ${e.toString()}', ToastType.error);
+    } finally {}
   }
 
   void _showLocationSettingsDialog() {
     // This would typically show a dialog to open device settings
-    showToast('Please enable location in device settings to connect to WiFi.');
+    showToast('Please enable location in device settings to connect to WiFi.', ToastType.error);
   }
 
   Future<void> openWifiSettings() async {
@@ -164,7 +157,7 @@ class HomeViewModel extends BaseViewModel {
       // Open device WiFi settings
       await SystemChannels.platform.invokeMethod('android.settings.WIFI_SETTINGS');
     } catch (e) {
-      showToast('Could not open WiFi settings.');
+      showToast('Could not open WiFi settings.', ToastType.error);
     }
   }
 
@@ -173,7 +166,7 @@ class HomeViewModel extends BaseViewModel {
       // Open device location settings
       await openAppSettings();
     } catch (e) {
-      showToast('Could not open location settings.');
+      showToast('Could not open location settings.', ToastType.error);
     }
   }
 
@@ -181,10 +174,17 @@ class HomeViewModel extends BaseViewModel {
     shouldShowWifiBadge.add(false);
   }
 
-  void showToast(String message) {
-    // Implement toast/snackbar showing logic
-    // This could emit to a stream that the UI listens to
-    print('Toast: $message'); // For now, just print
+  void showToast(String message, ToastType type) {
+    switch (type) {
+      case ToastType.success:
+        showSuccessConnectWifi.add(message);
+        break;
+      case ToastType.error:
+      // TODO
+        break;
+      default:
+      // do nothing
+    }
   }
 
   @override
