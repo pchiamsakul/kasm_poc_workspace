@@ -53,8 +53,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   void _goNext() {
     final lastIndex = _pages.length - 1;
     if (_currentPage == lastIndex) {
-      // _appNavigator.pushNamed(RouterName.WelcomePage);
-      _appNavigator.pushNamed(RouterName.ActivityPage);
+      _appNavigator.pushNamed(RouterName.WelcomePage);
     } else {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),

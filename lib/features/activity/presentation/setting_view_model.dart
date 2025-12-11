@@ -9,7 +9,7 @@ import 'package:rxdart/rxdart.dart';
 @injectable
 class SettingViewModel extends BaseViewModel {
   final String title = "SettingTest";
-  
+
   late final BehaviorSubject<String> behavior = BehaviorSubject.seeded(title);
   late final PublishSubject<String> publishStream = PublishSubject();
   // popup
