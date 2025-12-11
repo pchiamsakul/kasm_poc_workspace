@@ -35,19 +35,16 @@ class ActivityEventCardWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Top row: date + time + QR
               Row(
                 children: [
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // "Nov 15"
                         Text(
                           dateStr,
                           style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
                         ),
-                        // "7:00pm"
                         Text(
                           timeStr,
                           style: theme.textTheme.bodyMedium?.copyWith(
@@ -68,7 +65,6 @@ class ActivityEventCardWidget extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-              // Title
               Text(
                 item.title,
                 style: theme.textTheme.titleLarge?.copyWith(
@@ -79,7 +75,6 @@ class ActivityEventCardWidget extends StatelessWidget {
 
               const SizedBox(height: 8),
 
-              // Venue row
               Row(
                 children: [
                   Icon(
@@ -103,7 +98,6 @@ class ActivityEventCardWidget extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-              // Image area (fixed aspect)
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: _EventImage(imageUrl: item.imageUrl),
@@ -116,7 +110,6 @@ class ActivityEventCardWidget extends StatelessWidget {
   }
 
   String _formatMonthDay(DateTime dt) {
-    // e.g., "Nov 15"
     const months = [
       'Jan',
       'Feb',
@@ -132,7 +125,6 @@ class ActivityEventCardWidget extends StatelessWidget {
       'Dec',
     ];
     return '${months[dt.month - 1]} ${dt.day}';
-    // If you need localization, use intl package's DateFormat.
   }
 
   String _formatTime(DateTime dt) {
@@ -152,7 +144,6 @@ class _EventImage extends StatelessWidget {
   Widget build(BuildContext context) {
     final bg = Colors.grey.shade800;
 
-    // Keep a **wide** aspect like screenshot
     return AspectRatio(
       aspectRatio: 16 / 9,
       child: DecoratedBox(
