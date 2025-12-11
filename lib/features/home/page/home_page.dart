@@ -5,6 +5,7 @@ import 'package:kasm_poc_workspace/core/constant/k_color.dart';
 import 'package:kasm_poc_workspace/core/routers/app_navigator.dart';
 import 'package:kasm_poc_workspace/core/routers/navable.dart';
 import 'package:kasm_poc_workspace/core/routers/router_name.dart';
+import 'package:kasm_poc_workspace/core/widget/loading_container.dart';
 import 'package:kasm_poc_workspace/core/widget/toast_utils.dart';
 import 'package:kasm_poc_workspace/features/home/page/home_view_model.dart';
 import 'package:kasm_poc_workspace/features/home/widget/open_wifi_setting_sheet.dart';
@@ -58,94 +59,97 @@ class _HomePageState extends AppNavigatorListenState<HomePage, HomeViewModel> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          SafeArea(
-            child: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(child: carousel()),
-                SliverToBoxAdapter(
-                  child: StreamBuilder(
-                    stream: viewModel.showWifiBadgeMessage,
-                    builder: (context, asyncSnapshot) {
-                      return asyncSnapshot.data != true
-                          ? Container()
-                          : Positioned(
-                              left: 0,
-                              right: 0,
-                              bottom: 0,
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                                decoration: BoxDecoration(color: Colors.black),
-                                child: SafeArea(
-                                  top: false,
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.wifi, color: Colors.white, size: 24),
-                                      SizedBox(width: 12),
-                                      Expanded(
-                                        child: Text(
-                                          'You\'re in a Free Wi-Fi zone. Tap the icon below to connect.',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400,
+    return LoadingContainer(
+      isLoading: viewModel.isLoading,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Stack(
+          children: [
+            SafeArea(
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(child: carousel()),
+                  SliverToBoxAdapter(
+                    child: StreamBuilder(
+                      stream: viewModel.showWifiBadgeMessage,
+                      builder: (context, asyncSnapshot) {
+                        return asyncSnapshot.data != true
+                            ? Container()
+                            : Positioned(
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                  decoration: BoxDecoration(color: Colors.black),
+                                  child: SafeArea(
+                                    top: false,
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.wifi, color: Colors.white, size: 24),
+                                        SizedBox(width: 12),
+                                        Expanded(
+                                          child: Text(
+                                            'You\'re in a Free Wi-Fi zone. Tap the icon below to connect.',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                    },
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Home content sections
-                        _buildContentSection(),
-                      ],
+                              );
+                      },
                     ),
                   ),
-                ),
-              ],
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Home content sections
+                          _buildContentSection(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          // Floating Action Buttons
-          if (_showWifiButton)
-            StreamBuilder(
-              stream: viewModel.showWifiBadgeMessage,
-              builder: (context, asyncSnapshot) {
-                return asyncSnapshot.data != true
-                    ? Container()
-                    : Positioned(
-                        right: 16,
-                        bottom: 20,
-                        child: _buildFloatingButton(
-                          icon: Assets.icons.wifi.svg(
-                            width: 24,
-                            height: 24,
-                            colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+            // Floating Action Buttons
+            if (_showWifiButton)
+              StreamBuilder(
+                stream: viewModel.showWifiBadgeMessage,
+                builder: (context, asyncSnapshot) {
+                  return asyncSnapshot.data != true
+                      ? Container()
+                      : Positioned(
+                          right: 16,
+                          bottom: 20,
+                          child: _buildFloatingButton(
+                            icon: Assets.icons.wifi.svg(
+                              width: 24,
+                              height: 24,
+                              colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                            ),
+                            onPressed: viewModel.connectWifi,
+                            showCloseButton: true,
+                            onClose: () {
+                              setState(() {
+                                _showWifiButton = false;
+                              });
+                            },
                           ),
-                          onPressed: viewModel.connectWifi,
-                          showCloseButton: true,
-                          onClose: () {
-                            setState(() {
-                              _showWifiButton = false;
-                            });
-                          },
-                        ),
-                      );
-              },
-            ),
-        ],
+                        );
+                },
+              ),
+          ],
+        ),
       ),
     );
   }

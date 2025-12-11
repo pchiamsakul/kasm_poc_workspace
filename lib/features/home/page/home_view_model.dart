@@ -1,11 +1,8 @@
-import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
 import 'package:kasm_poc_workspace/core/base/base_view_model.dart';
 import 'package:kasm_poc_workspace/core/base/core_platform.dart';
 import 'package:kasm_poc_workspace/core/helper/continuation.dart';
-import 'package:kasm_poc_workspace/core/widget/toast_utils.dart';
 import 'package:kasm_poc_workspace/features/wifi/domain/services/wifi_service.dart';
-import 'package:kasm_poc_workspace/gen/strings.g.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -32,6 +29,7 @@ class HomeViewModel extends BaseViewModel {
 
   Future<void> _startFlow() async {
     try {
+      isLoading.add(true);
       final locationStatus = await Permission.location.status;
       if (!locationStatus.isGranted) {
         final permissionStatus = await Permission.location.request();
@@ -42,7 +40,10 @@ class HomeViewModel extends BaseViewModel {
           }
         }
       }
-    } catch (e) {}
+    } catch (e) {
+    } finally {
+      isLoading.add(false);
+    }
   }
 
   Future<bool> _isInAreaStadium() async {
@@ -76,6 +77,7 @@ class HomeViewModel extends BaseViewModel {
 
       if (networkName?.contains(kallangSSID) == true) {
         showWifiBadgeMessage.add(false);
+        showSuccessConnectWifi.add(kallangSSID);
       } else {
         showWifiBadgeMessage.add(true);
       }
@@ -89,6 +91,7 @@ class HomeViewModel extends BaseViewModel {
   }
 
   Future<void> connectWifi() async {
+    isLoading.add(true);
     isWifiNeedRecheckWhenResume = false;
     if (!await _wifiService.isWifiEnabled()) {
       final isUserOpenWifiSettings = await showWifiTurnOffSuggestion.wait();
@@ -103,72 +106,19 @@ class HomeViewModel extends BaseViewModel {
         if (status.isGranted) {
           await _connectToKallangWifi();
         }
-      } catch (e) {
-
-      }
+      } catch (e) {}
     } else {
       await _connectToKallangWifi();
     }
+
+    isLoading.add(false);
   }
 
   Future<void> _connectToKallangWifi() async {
     try {
-      final success = await _wifiService.connectToWifi(
-        ssid: kallangSSID,
-        password: null, // Assuming it's open network
-        timeoutSeconds: 30,
-      );
-
-      if (success) {
-        connectedNetworkName.add(kallangSSID);
-        showWifiBadgeMessage.add(false); // Hide banner on successful connection
-        showToast(kallangSSID, ToastType.success);
-      } else {
-        showToast('Failed to connect to Kallang WiFi. Please try again.', ToastType.error);
-      }
+      await _wifiService.connectToWifi(ssid: kallangSSID, password: null, timeoutSeconds: 30);
     } catch (e) {
-      showToast('Connection failed: ${e.toString()}', ToastType.error);
     } finally {}
-  }
-
-  void _showLocationSettingsDialog() {
-    // This would typically show a dialog to open device settings
-    showToast('Please enable location in device settings to connect to WiFi.', ToastType.error);
-  }
-
-  Future<void> openWifiSettings() async {
-    try {
-      // Open device WiFi settings
-      await SystemChannels.platform.invokeMethod('android.settings.WIFI_SETTINGS');
-    } catch (e) {
-      showToast('Could not open WiFi settings.', ToastType.error);
-    }
-  }
-
-  Future<void> openLocationSettings() async {
-    try {
-      // Open device location settings
-      await openAppSettings();
-    } catch (e) {
-      showToast('Could not open location settings.', ToastType.error);
-    }
-  }
-
-  void dismissWifiBanner() {
-    showWifiBadgeMessage.add(false);
-  }
-
-  void showToast(String message, ToastType type) {
-    switch (type) {
-      case ToastType.success:
-        showSuccessConnectWifi.add(message);
-        break;
-      case ToastType.error:
-        // TODO
-        break;
-      default:
-      // do nothing
-    }
   }
 
   @override
