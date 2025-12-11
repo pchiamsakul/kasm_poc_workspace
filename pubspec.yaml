@@ -6,13 +6,16 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.7.0
+  sdk: ^3.9.0
 
 dependencies:
+  # SDK
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+
+  # Core & UI
   cupertino_icons: ^1.0.8
   async: ^2.11.0
   clock: ^1.1.2
@@ -21,69 +24,93 @@ dependencies:
   percent_indicator: ^4.2.5
   jiffy: ^6.2.1
   intl: ^0.20.2
-
   url_launcher: ^6.3.2
-
-  # Animation
   animations: ^2.0.11
   carousel_slider: ^5.1.1
+
+  # Networking & Connectivity
+  http: ^1.1.2
+  wifi_scan: ^0.4.1+2
+  plugin_wifi_connect: ^2.0.1
+  connectivity_plus: ^7.0.0
+  wifi_iot: ^0.3.19+2
+  dio: ^5.9.0
+
+  # State Management & Utilities
+  gap: ^3.0.1
+  synchronized: ^3.4.0
+  uuid: ^4.5.1
+  system_proxy: ^0.1.0
+  permission_handler: ^11.3.1
+
+  # Image & Caching
+  cached_network_image: ^3.3.0
+
+  # Code Generation
+  get_it: ^8.0.3
+  retrofit: ^4.4.2
+  injectable: ^2.3.2
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.9.0
+
+  # Environment & Storage
+  package_info_plus: ^8.3.0
+  flutter_dotenv: ^6.0.0
+  encrypt_shared_preferences: ^0.8.0
+  device_info_plus: ^12.2.0
+
+  # Firebase
+  #  firebase_core: ^4.1.0
+  #  firebase_analytics: ^12.0.1d
+  #  firebase_remote_config: ^6.0.1
 
   # Translation
   slang: ^4.7.3
   slang_flutter: ^4.7.0
 
-  # Generate
-  get_it: ^8.0.3
-  retrofit: ^4.0.1
-  injectable: ^2.3.0
-  freezed_annotation: ^3.1.0
-  json_annotation: ^4.9.0
-  uuid: ^4.5.1
-
-  # Env management
-  package_info_plus: ^8.3.0
-  flutter_dotenv: ^6.0.0
-
-  # Firebase
-  firebase_core: ^4.1.0
-  firebase_analytics: ^12.0.1
-  firebase_remote_config: ^6.0.1
-
-  # Debugging tools
+  # Debugging
   flutter_fimber: ^0.7.1
 
-  # Proxy overrides
-  system_proxy: ^0.1.0
-
-  device_info_plus: ^12.2.0
-
 dev_dependencies:
+  # SDK
   flutter_test:
     sdk: flutter
 
-  # Generate
+  # Code Generation
+  build_runner: ^2.4.11
   freezed: ^3.1.0
   injectable_generator: ^2.4.0
   retrofit_generator: ^10.0.4
   json_serializable: ^6.7.1
-  build_runner: ^2.4.6
-  slang_build_runner: ^4.7.0
   flutter_gen_runner: ^5.3.1
 
+  # Linting & Analysis
   analyzer: ^7.7.0
   flutter_lints: ^5.0.0
+
+  # Build Tools
+  flutter_launcher_icons: ^0.14.2
+  slang_build_runner: ^4.7.0
 
 flutter:
   uses-material-design: true
   assets:
-    - assets/svg/
-    - assets/fonts/
-    - assets/json/
-    - assets/images/
     - develop.env
+    - staging.env
     - production.env
+    - assets/images/
+    - assets/icons/
+    - assets/logos/
+    - assets/json/
+    - assets/fonts/
+    - lib/features/wifi/presentations/
 
 flutter_gen:
   output: lib/generated/
   integrations:
     flutter_svg: true
+  assets:
+    exclude:
+      - develop.env
+      - staging.env
+      - production.env

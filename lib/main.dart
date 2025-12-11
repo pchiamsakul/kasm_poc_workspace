@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:kasm_poc_workspace/app.dart';
-import 'package:kasm_poc_workspace/bases/init.dart';
-import 'package:kasm_poc_workspace/i18n/strings.g.dart';
+import 'package:kasm_poc_workspace/core/base/init.dart';
+import 'package:kasm_poc_workspace/generated/strings.g.dart';
+
+import 'app.dart';
+import 'environment_config.dart';
 
 void main() async {
-  await Init.instance.initialize();
-
-  runApp(TranslationProvider(child: const KasmPocWorkspaceApp()));
+  await Init.instance.initialize(EnvironmentType.production);
+  runApp(TranslationProvider(child: const ThemeApp()));
 }

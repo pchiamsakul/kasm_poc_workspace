@@ -1,0 +1,123 @@
+import 'package:flutter/material.dart';
+import 'package:injectable/injectable.dart';
+import 'package:kasm_poc_workspace/core/routers/app_page_route_builder.dart';
+import 'package:synchronized/synchronized.dart';
+
+class OnNavChangedListener {
+  void onNavFinished() {}
+}
+
+class AppNavigatorConfiguration {
+  RouteTransition? transition;
+  dynamic arguments;
+
+  AppNavigatorConfiguration({this.transition, this.arguments});
+}
+
+abstract class AppNavigator {
+  Future pushNamed(String routeName, {dynamic arguments, RouteTransition? transition});
+
+  Future pushReplacementNamed(String routeName, {dynamic arguments, RouteTransition? transition});
+
+  Future pushNamedAndRemoveUntil(String routeName, RoutePredicate predicate,
+      {dynamic arguments, RouteTransition? transition});
+
+  void pop<T extends Object?>([T? result]);
+
+  void popUntil(RoutePredicate predicate);
+
+  void setNavigatorKey(GlobalKey<NavigatorState> navigatorKey);
+
+  void addOnNavChangedListener(OnNavChangedListener callBack);
+
+  void removeOnNavChangedListener(OnNavChangedListener callBack);
+}
+
+@singleton
+class AppNavigator {
+  GlobalKey<NavigatorState>? navigatorKey;
+  final onNavChangedListeners = <OnNavChangedListener>[];
+
+  @override
+  void setNavigatorKey(GlobalKey<NavigatorState> navigatorKey) {
+    if (this.navigatorKey != navigatorKey) {
+      _currentState?.dispose();
+    }
+    this.navigatorKey = navigatorKey;
+  }
+
+  NavigatorState? get _currentState => navigatorKey?.currentState;
+
+  @override
+  @optionalTypeArgs
+  Future pushNamed(String routeName, {dynamic arguments, RouteTransition? transition}) async {
+    final result = await _currentState?.pushNamed(routeName,
+            arguments: AppNavigatorConfiguration(
+              transition: transition,
+              arguments: arguments,
+            )) ??
+        Future.value(null);
+    _fireEvent();
+    return result;
+  }
+
+  @override
+  @optionalTypeArgs
+  Future pushReplacementNamed(String routeName,
+      {dynamic arguments, RouteTransition? transition}) async {
+    final result = await _currentState?.pushReplacementNamed(routeName,
+            arguments: AppNavigatorConfiguration(
+              transition: transition,
+              arguments: arguments,
+            )) ??
+        Future.value(null);
+    _fireEvent();
+    return result;
+  }
+
+  @override
+  @optionalTypeArgs
+  Future pushNamedAndRemoveUntil(String routeName, RoutePredicate predicate,
+      {dynamic arguments, RouteTransition? transition}) async {
+    final result = await _currentState?.pushNamedAndRemoveUntil(
+          routeName,
+          predicate,
+          arguments: AppNavigatorConfiguration(
+            transition: transition,
+            arguments: arguments,
+          ),
+        ) ??
+        Future.value(null);
+    _fireEvent();
+    return result;
+  }
+
+  @override
+  void addOnNavChangedListener(OnNavChangedListener callBack) {
+    onNavChangedListeners.add(callBack);
+  }
+
+  @override
+  void removeOnNavChangedListener(OnNavChangedListener callBack) {
+    onNavChangedListeners.remove(callBack);
+  }
+
+  Future<void> _fireEvent() async {
+    final lock = new Lock();
+    await lock.synchronized(() async {
+      onNavChangedListeners.forEach((element) {
+        element.onNavFinished();
+      });
+    });
+  }
+
+  @override
+  void pop<T extends Object?>([T? result]) {
+    _currentState?.pop(result);
+  }
+
+  @override
+  void popUntil(RoutePredicate predicate) {
+    _currentState?.popUntil(predicate);
+  }
+}
