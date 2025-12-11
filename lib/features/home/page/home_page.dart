@@ -58,8 +58,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-
-
   Widget carousel() {
     return CarouselSlider(
       options: CarouselOptions(

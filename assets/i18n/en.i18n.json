@@ -1,3 +1,10 @@
 {
-  "app_name": "KASM"
+  "app_name": "TKG",
+  "landing_page": {
+    "home": "Home",
+    "explore": "Explore",
+    "my_booking": "My Booking",
+    "find_your_way": "Find Your Way",
+    "account": "Account"
+  }
 }
