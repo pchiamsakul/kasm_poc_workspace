@@ -1,10 +1,11 @@
+import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
 import 'package:kasm_poc_workspace/core/base/base_view_model.dart';
+import 'package:kasm_poc_workspace/core/helper/continuation.dart';
 import 'package:kasm_poc_workspace/features/wifi/domain/models/wifi_connection_state.dart';
 import 'package:kasm_poc_workspace/features/wifi/domain/services/wifi_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:flutter/services.dart';
 
 @injectable
 class HomeViewModel extends BaseViewModel {
@@ -13,15 +14,30 @@ class HomeViewModel extends BaseViewModel {
   HomeViewModel(this._wifiService);
 
   final BehaviorSubject<bool> shouldShowWifiBadge = BehaviorSubject.seeded(true);
-  final BehaviorSubject<WifiConnectionStatus> wifiConnectionStatus =
-  BehaviorSubject.seeded(WifiConnectionStatus.unknown);
+  final Continuation<bool> showWifiTurnOffSuggestion = Continuation();
+  final BehaviorSubject<WifiConnectionStatus> wifiConnectionStatus = BehaviorSubject.seeded(
+    WifiConnectionStatus.unknown,
+  );
+
+  // use steam maybe show some suggest ui later
   final BehaviorSubject<bool> isLocationEnabled = BehaviorSubject.seeded(false);
-  final BehaviorSubject<bool> isConnecting = BehaviorSubject.seeded(false);
+  final BehaviorSubject<bool> isLoading = BehaviorSubject();
   final BehaviorSubject<String?> connectedNetworkName = BehaviorSubject.seeded(null);
+
+  var isWifiNeedRecheckWhenResume = false;
 
   void initialize() {
     _checkInitialWifiState();
     _listenToWifiChanges();
+  }
+
+  Future<void> resumeCheckWifi() async {
+    if (isWifiNeedRecheckWhenResume) {
+      if (await _wifiService.isWifiEnabled()) {
+        connectWifi();
+      }
+    }
+    isWifiNeedRecheckWhenResume = false;
   }
 
   Future<void> _checkInitialWifiState() async {
@@ -65,8 +81,15 @@ class HomeViewModel extends BaseViewModel {
   }
 
   Future<void> connectWifi() async {
+    isWifiNeedRecheckWhenResume = false;
+    if (!await _wifiService.isWifiEnabled()) {
+      final isUserOpenWifiSettings = await showWifiTurnOffSuggestion.wait();
+      if (isUserOpenWifiSettings) {
+        isWifiNeedRecheckWhenResume = true;
+      }
+      return;
+    }
     if (!isLocationEnabled.value) {
-      // Request location permission first
       await _requestLocationPermission();
       return;
     }
@@ -95,7 +118,6 @@ class HomeViewModel extends BaseViewModel {
 
   Future<void> _connectToKallangWifi() async {
     try {
-      isConnecting.add(true);
       wifiConnectionStatus.add(WifiConnectionStatus.connecting);
 
       // Check if WiFi is enabled first
@@ -129,7 +151,6 @@ class HomeViewModel extends BaseViewModel {
       wifiConnectionStatus.add(WifiConnectionStatus.failed);
       showToast('Connection failed: ${e.toString()}');
     } finally {
-      isConnecting.add(false);
     }
   }
 
@@ -171,7 +192,6 @@ class HomeViewModel extends BaseViewModel {
     shouldShowWifiBadge.close();
     wifiConnectionStatus.close();
     isLocationEnabled.close();
-    isConnecting.close();
     connectedNetworkName.close();
     super.dispose();
   }

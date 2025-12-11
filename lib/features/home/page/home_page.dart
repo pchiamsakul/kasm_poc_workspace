@@ -1,19 +1,17 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
-import 'package:kasm_poc_workspace/app/app_module.dart';
 import 'package:kasm_poc_workspace/core/constant/k_color.dart';
+import 'package:kasm_poc_workspace/core/routers/app_navigator.dart';
 import 'package:kasm_poc_workspace/core/routers/navable.dart';
 import 'package:kasm_poc_workspace/core/routers/router_name.dart';
 import 'package:kasm_poc_workspace/features/home/page/home_view_model.dart';
-import 'package:kasm_poc_workspace/features/home/widget/wifi_connection_dialog.dart';
-import 'package:kasm_poc_workspace/features/wifi/domain/models/wifi_connection_state.dart';
+import 'package:kasm_poc_workspace/features/home/widget/open_wifi_setting_sheet.dart';
 import 'package:kasm_poc_workspace/generated/assets.gen.dart';
 
 @Named(RouterName.HomePage)
 @Injectable(as: NavAble)
-class HomeNavigator
-    implements NavAble {
+class HomeNavigator implements NavAble {
   @override
   Widget get(argument) => const HomePage();
 }
@@ -25,19 +23,23 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  final viewModel = getIt<HomeViewModel>();
+class _HomePageState extends AppNavigatorListenState<HomePage, HomeViewModel> {
 
   int _currentIndex = 0;
   final List<int> _carouselItems = [1, 2, 3, 4, 5];
   bool _showWifiBanner = true;
   bool _showWifiButton = true;
-  bool _showChatButton = true;
 
   @override
   void dispose() {
     viewModel.dispose();
     super.dispose();
+  }
+  
+  @override
+  void onResume() {
+    super.onResume();
+    viewModel.resumeCheckWifi();
   }
 
   @override
@@ -45,7 +47,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     viewModel.initialize();
 
-    // Listen to WiFi banner state
     viewModel.shouldShowWifiBadge.listen((show) {
       if (mounted) {
         setState(() {
@@ -54,48 +55,9 @@ class _HomePageState extends State<HomePage> {
       }
     });
 
-    // Listen to connection status
-    viewModel.isConnecting.listen((connecting) {
-      if (mounted && connecting) {
-        WifiConnectionDialog.show(
-          context: context,
-          isConnecting: true,
-        );
-      }
-    });
-
-    // Listen to WiFi connection status changes
-    viewModel.wifiConnectionStatus.listen((status) {
-      if (!mounted) return;
-
-      switch (status) {
-        case WifiConnectionStatus.connected:
-          Navigator.of(context).popUntil((route) => route.isFirst);
-          WifiConnectionDialog.show(
-            context: context,
-            isSuccess: true,
-            message: 'You are now connected to Kallang Free WiFi',
-            onClose: () {
-              setState(() {
-                _showWifiButton = false;
-              });
-            },
-          );
-          break;
-        case WifiConnectionStatus.failed:
-          Navigator.of(context).popUntil((route) => route.isFirst);
-          WifiConnectionDialog.show(
-            context: context,
-            isError: true,
-            message: 'Unable to connect to Kallang WiFi. Please check your settings.',
-            onOpenSettings: () {
-              viewModel.openWifiSettings();
-            },
-          );
-          break;
-        default:
-          break;
-      }
+    viewModel.showWifiTurnOffSuggestion.listen((continuation) async {
+      final result = await OpenWifiSettingSheet.show(context);
+      continuation.resume(result == true);
     });
   }
 
@@ -138,10 +100,7 @@ class _HomePageState extends State<HomePage> {
             child: Container(
               width: 24,
               height: 24,
-              decoration: BoxDecoration(
-                color: Colors.red,
-                shape: BoxShape.circle,
-              ),
+              decoration: BoxDecoration(color: Colors.red, shape: BoxShape.circle),
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
@@ -194,11 +153,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               Text(
                 'SEASONAL FESTIVAL',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black87,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black87),
               ),
               SizedBox(height: 16),
               Container(
@@ -224,10 +179,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildContentCard(String title) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(12),
-      ),
+      decoration: BoxDecoration(color: Colors.grey[100], borderRadius: BorderRadius.circular(12)),
       child: Column(
         children: [
           Expanded(
@@ -250,11 +202,7 @@ class _HomePageState extends State<HomePage> {
             padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
             child: Text(
               title,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black87),
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -288,10 +236,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 // Add spacing for bottom banner
-                if (_showWifiBanner)
-                  SliverToBoxAdapter(
-                    child: SizedBox(height: 80),
-                  ),
+                if (_showWifiBanner) SliverToBoxAdapter(child: SizedBox(height: 80)),
               ],
             ),
           ),
@@ -324,18 +269,12 @@ class _HomePageState extends State<HomePage> {
               bottom: 0,
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                ),
+                decoration: BoxDecoration(color: Colors.black),
                 child: SafeArea(
                   top: false,
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.wifi,
-                        color: Colors.white,
-                        size: 24,
-                      ),
+                      Icon(Icons.wifi, color: Colors.white, size: 24),
                       SizedBox(width: 12),
                       Expanded(
                         child: Text(
@@ -356,8 +295,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-
 
   Widget carousel() {
     return CarouselSlider(
@@ -384,10 +321,7 @@ class _HomePageState extends State<HomePage> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                Colors.grey[800]!,
-                Colors.grey[700]!,
-              ],
+              colors: [Colors.grey[800]!, Colors.grey[700]!],
             ),
           ),
           child: Column(
@@ -442,10 +376,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               SizedBox(height: 8),
-              Text(
-                'See All Highlights >',
-                style: TextStyle(fontSize: 14, color: Colors.white70),
-              ),
+              Text('See All Highlights >', style: TextStyle(fontSize: 14, color: Colors.white70)),
               SizedBox(height: 16),
               _buildCarouselIndicator(),
               SizedBox(height: 16),
