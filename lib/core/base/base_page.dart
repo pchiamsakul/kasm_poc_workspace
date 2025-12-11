@@ -50,7 +50,9 @@ abstract class BasePage<VM extends BaseViewModel, T extends StatefulWidget> exte
         : null;
   }
 
-  Widget buildPageContent(BuildContext context);
+  Widget buildPageContent(BuildContext context) => SizedBox();
+
+  Widget BuildButtomNavigationBar(BuildContext context) => SizedBox();
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +65,7 @@ abstract class BasePage<VM extends BaseViewModel, T extends StatefulWidget> exte
           controller: _scrollController,
           child: SafeArea(child: buildPageContent(context)),
         ),
+        bottomNavigationBar: BuildButtomNavigationBar(context),
       ),
     );
   }
