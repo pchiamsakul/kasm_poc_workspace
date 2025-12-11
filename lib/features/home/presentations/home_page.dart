@@ -5,7 +5,7 @@ import 'package:kasm_poc_workspace/app/app_module.dart';
 import 'package:kasm_poc_workspace/core/routers/navable.dart';
 import 'package:kasm_poc_workspace/core/routers/router_name.dart';
 import 'package:kasm_poc_workspace/core/widget/button.dart';
-import 'package:kasm_poc_workspace/features/home/page/home_view_model.dart';
+import 'package:kasm_poc_workspace/features/home/presentations/home_view_model.dart';
 import 'package:kasm_poc_workspace/generated/assets.gen.dart';
 
 @Named(RouterName.HomePage)
