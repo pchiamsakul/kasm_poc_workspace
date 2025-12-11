@@ -53,10 +53,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
   void _goNext() {
     final lastIndex = _pages.length - 1;
     if (_currentPage == lastIndex) {
-      _appNavigator.pushNamed(RouterName.WelcomePage);
-      // Navigator.of(context).pushReplacement(
-      // MaterialPageRoute(builder: (_) => const GetStartedPage()),
-      // );
+      // _appNavigator.pushNamed(RouterName.WelcomePage);
+      _appNavigator.pushNamed(RouterName.ActivityPage);
     } else {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
@@ -133,7 +131,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   ),
                   const SizedBox(height: 16),
                   CommonPrimaryButtonWidget(
-                    text: isLast ? 'GET STARTED' : 'NEXT',
+                    text: isLast ? 'GET STARTED TMP Activity' : 'NEXT',
                     onPressed: _goNext,
                   ),
                 ],
