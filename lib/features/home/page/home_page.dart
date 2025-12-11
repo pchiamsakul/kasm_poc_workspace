@@ -25,10 +25,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends AppNavigatorListenState<HomePage, HomeViewModel> {
-
   int _currentIndex = 0;
   final List<int> _carouselItems = [1, 2, 3, 4, 5];
-  bool _showWifiBanner = true;
   bool _showWifiButton = true;
 
   @override
@@ -36,7 +34,7 @@ class _HomePageState extends AppNavigatorListenState<HomePage, HomeViewModel> {
     viewModel.dispose();
     super.dispose();
   }
-  
+
   @override
   void onResume() {
     super.onResume();
@@ -50,13 +48,6 @@ class _HomePageState extends AppNavigatorListenState<HomePage, HomeViewModel> {
 
     viewModel.showSuccessConnectWifi.listen((wifiName) {
       ToastUtils.showSuccess(context, message: "Connected $wifiName Wi-Fi");
-    });
-    viewModel.shouldShowWifiBadge.listen((show) {
-      if (mounted) {
-        setState(() {
-          _showWifiBanner = show;
-        });
-      }
     });
 
     viewModel.showWifiTurnOffSuggestion.listen((continuation) async {
@@ -239,62 +230,81 @@ class _HomePageState extends AppNavigatorListenState<HomePage, HomeViewModel> {
                     ),
                   ),
                 ),
-                // Add spacing for bottom banner
-                if (_showWifiBanner) SliverToBoxAdapter(child: SizedBox(height: 80)),
+                SliverToBoxAdapter(
+                  child: StreamBuilder(
+                    stream: viewModel.shouldShowWifiBadge,
+                    builder: (context, asyncSnapshot) {
+                      return SizedBox(height: asyncSnapshot.data != true ? 0 : 80);
+                    },
+                  ),
+                ),
               ],
             ),
           ),
           // Floating Action Buttons
           if (_showWifiButton)
-            Positioned(
-              right: 16,
-              bottom: _showWifiBanner ? 140 : 100,
-              child: _buildFloatingButton(
-                icon: Assets.icons.wifi.svg(
-                  width: 24,
-                  height: 24,
-                  colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
-                ),
-                onPressed: () {
-                  viewModel.connectWifi();
-                },
-                showCloseButton: true,
-                onClose: () {
-                  setState(() {
-                    _showWifiButton = false;
-                  });
-                },
-              ),
+            StreamBuilder(
+              stream: viewModel.shouldShowWifiBadge,
+              builder: (context, asyncSnapshot) {
+                return asyncSnapshot.data != true
+                    ? Container()
+                    : Positioned(
+                        right: 16,
+                        bottom: 140,
+                        child: _buildFloatingButton(
+                          icon: Assets.icons.wifi.svg(
+                            width: 24,
+                            height: 24,
+                            colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                          ),
+                          onPressed: () {
+                            viewModel.connectWifi();
+                          },
+                          showCloseButton: true,
+                          onClose: () {
+                            setState(() {
+                              _showWifiButton = false;
+                            });
+                          },
+                        ),
+                      );
+              },
             ),
-          if (_showWifiBanner)
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                decoration: BoxDecoration(color: Colors.black),
-                child: SafeArea(
-                  top: false,
-                  child: Row(
-                    children: [
-                      Icon(Icons.wifi, color: Colors.white, size: 24),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          'You\'re in a Free Wi-Fi zone. Tap the icon below to connect.',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
+          StreamBuilder(
+            stream: viewModel.shouldShowWifiBadge,
+            builder: (context, asyncSnapshot) {
+              return asyncSnapshot.data != true
+                  ? Container()
+                  : Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        decoration: BoxDecoration(color: Colors.black),
+                        child: SafeArea(
+                          top: false,
+                          child: Row(
+                            children: [
+                              Icon(Icons.wifi, color: Colors.white, size: 24),
+                              SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  'You\'re in a Free Wi-Fi zone. Tap the icon below to connect.',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+                    );
+            },
+          ),
         ],
       ),
     );

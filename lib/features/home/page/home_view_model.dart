@@ -4,10 +4,11 @@ import 'package:kasm_poc_workspace/core/base/base_view_model.dart';
 import 'package:kasm_poc_workspace/core/base/core_platform.dart';
 import 'package:kasm_poc_workspace/core/helper/continuation.dart';
 import 'package:kasm_poc_workspace/core/widget/toast_utils.dart';
-import 'package:kasm_poc_workspace/features/wifi/domain/models/wifi_connection_state.dart';
 import 'package:kasm_poc_workspace/features/wifi/domain/services/wifi_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
+
+const kallangSSID = 'Suraking_Guest';
 
 @injectable
 class HomeViewModel extends BaseViewModel {
@@ -16,11 +17,8 @@ class HomeViewModel extends BaseViewModel {
   HomeViewModel(this._wifiService);
 
   final PublishSubject<String> showSuccessConnectWifi = PublishSubject();
-  final BehaviorSubject<bool> shouldShowWifiBadge = BehaviorSubject.seeded(true);
+  final BehaviorSubject<bool> shouldShowWifiBadge = BehaviorSubject.seeded(false);
   final Continuation<bool> showWifiTurnOffSuggestion = Continuation();
-  final BehaviorSubject<WifiConnectionStatus> wifiConnectionStatus = BehaviorSubject.seeded(
-    WifiConnectionStatus.unknown,
-  );
 
   // use steam maybe show some suggest ui later
   final BehaviorSubject<bool> isLocationEnabled = BehaviorSubject.seeded(false);
@@ -54,7 +52,7 @@ class HomeViewModel extends BaseViewModel {
         final isWifiEnabled = await _wifiService.isWifiEnabled();
 
         if (!isWifiEnabled) {
-          wifiConnectionStatus.add(WifiConnectionStatus.disabled);
+          shouldShowWifiBadge.add(true);
           return;
         }
       }
@@ -66,17 +64,15 @@ class HomeViewModel extends BaseViewModel {
       connectedNetworkName.add(networkName);
 
       if (isConnected && networkName != null) {
-        wifiConnectionStatus.add(WifiConnectionStatus.connected);
-        // Hide banner if already connected to Kallang WiFi
-        if (networkName.toLowerCase().contains('kallang')) {
+        if (networkName.contains(kallangSSID)) {
           shouldShowWifiBadge.add(false);
+        } else {
+          shouldShowWifiBadge.add(true);
         }
       } else {
-        wifiConnectionStatus.add(WifiConnectionStatus.disconnected);
+        shouldShowWifiBadge.add(true);
       }
-    } catch (e) {
-      wifiConnectionStatus.add(WifiConnectionStatus.unknown);
-    }
+    } catch (e) {}
   }
 
   void _listenToWifiChanges() {
@@ -123,9 +119,6 @@ class HomeViewModel extends BaseViewModel {
 
   Future<void> _connectToKallangWifi() async {
     try {
-      wifiConnectionStatus.add(WifiConnectionStatus.connecting);
-      const kallangSSID = 'Suraking_Guest';
-
       final success = await _wifiService.connectToWifi(
         ssid: kallangSSID,
         password: null, // Assuming it's open network
@@ -133,16 +126,13 @@ class HomeViewModel extends BaseViewModel {
       );
 
       if (success) {
-        wifiConnectionStatus.add(WifiConnectionStatus.connected);
         connectedNetworkName.add(kallangSSID);
         shouldShowWifiBadge.add(false); // Hide banner on successful connection
         showToast(kallangSSID, ToastType.success);
       } else {
-        wifiConnectionStatus.add(WifiConnectionStatus.failed);
         showToast('Failed to connect to Kallang WiFi. Please try again.', ToastType.error);
       }
     } catch (e) {
-      wifiConnectionStatus.add(WifiConnectionStatus.failed);
       showToast('Connection failed: ${e.toString()}', ToastType.error);
     } finally {}
   }
@@ -180,7 +170,7 @@ class HomeViewModel extends BaseViewModel {
         showSuccessConnectWifi.add(message);
         break;
       case ToastType.error:
-      // TODO
+        // TODO
         break;
       default:
       // do nothing
@@ -190,7 +180,6 @@ class HomeViewModel extends BaseViewModel {
   @override
   void dispose() {
     shouldShowWifiBadge.close();
-    wifiConnectionStatus.close();
     isLocationEnabled.close();
     connectedNetworkName.close();
     super.dispose();
