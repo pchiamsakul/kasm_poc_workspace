@@ -54,9 +54,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
     final lastIndex = _pages.length - 1;
     if (_currentPage == lastIndex) {
       _appNavigator.pushNamed(RouterName.WelcomePage);
-      // Navigator.of(context).pushReplacement(
-      // MaterialPageRoute(builder: (_) => const GetStartedPage()),
-      // );
     } else {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),

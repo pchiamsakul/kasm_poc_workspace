@@ -76,13 +76,13 @@ class _WelcomePageState extends State<WelcomePage> {
                       CommonSecondaryButtonWidget(
                         text: 'LOGIN',
                         onPressed: () {
-                          _appNavigator.pushNamedAndRemoveAll(RouterName.HomePage);
+                          _appNavigator.pushNamedAndRemoveAll(RouterName.LandingPage);
                         },
                       ),
                       const SizedBox(height: 12),
                       TextButton(
                         onPressed: () {
-                          _appNavigator.pushNamedAndRemoveAll(RouterName.HomePage);
+                          _appNavigator.pushNamedAndRemoveAll(RouterName.LandingPage);
                         },
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,

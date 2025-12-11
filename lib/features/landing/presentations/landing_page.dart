@@ -1,14 +1,12 @@
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:kasm_poc_workspace/app/app_module.dart';
-import 'package:kasm_poc_workspace/core/routers/app_navigator.dart';
 import 'package:kasm_poc_workspace/core/routers/navable.dart';
 import 'package:kasm_poc_workspace/core/routers/router_name.dart';
+import 'package:kasm_poc_workspace/features/landing/presentations/landing_view_model.dart';
 import 'package:kasm_poc_workspace/generated/strings.g.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-@Named(RouterName.MainPage)
+@Named(RouterName.LandingPage)
 @Injectable(as: NavAble)
 class LandingNavigator implements NavAble {
   @override
@@ -23,105 +21,90 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> {
-  int _counter = 0;
-  late final AppNavigator _appNavigator;
+  late final LandingViewModel viewModel;
 
   @override
   void initState() {
     super.initState();
-
-    _appNavigator = getIt<AppNavigator>();
-  }
-
-  void _incrementCounter() async {
-    setState(() {
-      _counter++;
-    });
-
-    var deviceInfo = await DeviceInfoPlugin().deviceInfo;
-
-    debugPrint('Device Info: ${deviceInfo.data['identifierForVendor']}');
-  }
-
-  // ignore: unused_element
-  void _launchUrl() async {
-    const clientId = "YOUR_CLIENT_ID_HERE";
-    const redirectUri = "myapp://callback"; // registered in Singpass portal
-    const scopes = "openid myinfo.name myinfo.dob"; // modify as needed
-
-    // final state = _generateRandomString();
-    // final nonce = _generateRandomString();
-
-    final encodedRedirectUri = Uri.encodeComponent(redirectUri);
-    final encodedScope = Uri.encodeComponent(scopes);
-
-    final authUrl = Uri.parse(
-      "https://id.singpass.gov.sg/auth"
-      "?response_type=code"
-      "&client_id=$clientId"
-      "&redirect_uri=$encodedRedirectUri"
-      "&scope=$encodedScope",
-      // "&state=$state"
-      // "&nonce=$nonce",
-    );
-
-    if (await canLaunchUrl(authUrl)) {
-      await launchUrl(authUrl, mode: LaunchMode.externalApplication);
-    } else {
-      throw Exception("Could not launch Singpass login URL");
-    }
-  }
-
-  Widget buttonScreen(String route) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8),
-      child: Column(
-        children: <Widget>[
-          ElevatedButton(
-            onPressed: () => _appNavigator.pushNamed(route),
-            child: Text(route.replaceAll('/', '')),
-          ),
-          SizedBox(height: 8),
-          const Divider(height: 1, color: Colors.grey),
-        ],
-      ),
-    );
+    viewModel = getIt<LandingViewModel>();
+    viewModel.onInit();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      body: StreamBuilder(
+        stream: viewModel.selectedIndex,
+        builder: (context, snapshot) {
+          final selectedIndex = snapshot.data ?? 0;
 
-        title: Text(t.app_name),
+          return IndexedStack(
+            index: selectedIndex,
+            children: List.generate(viewModel.pages.length, (index) {
+              if (viewModel.createdPages.containsKey(index) || index == selectedIndex) {
+                return viewModel.getPageAt(index);
+              }
+
+              // Return empty container for unvisited pages
+              return Container();
+            }),
+          );
+        },
       ),
-      body: Container(
-        padding: EdgeInsets.all(16),
-        alignment: Alignment.center,
-        child: Column(
-          children: <Widget>[
-            ExpansionTile(
-              shape: const Border(),
-              collapsedShape: const Border(),
-              title: Text('Mockup Screen'),
-              children: <Widget>[
-                const Divider(height: 1, color: Colors.grey),
-                buttonScreen(RouterName.PocWifiPage),
-                buttonScreen(RouterName.HomePage),
-                buttonScreen(RouterName.SignupPage),
-                buttonScreen(RouterName.ActivityPage),
-                buttonScreen(RouterName.OnboardingPage),
-                buttonScreen(RouterName.WelcomePage),
+      bottomNavigationBar: StreamBuilder(
+        stream: viewModel.selectedIndex,
+        builder: (context, snapshot) {
+          final selectedIndex = snapshot.data ?? 0;
+
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 8,
+                  offset: Offset(0, -2),
+                ),
               ],
             ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: BottomNavigationBar(
+                currentIndex: selectedIndex,
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+                selectedItemColor: Colors.black,
+                unselectedItemColor: Colors.black.withValues(alpha: 0.5),
+                selectedFontSize: 12,
+                unselectedFontSize: 12,
+                type: BottomNavigationBarType.fixed,
+                onTap: viewModel.onTabChanged,
+                items: [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.circle_outlined, color: Colors.black.withValues(alpha: 0.5)),
+                    label: t.landing_page.home,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.circle_outlined, color: Colors.black.withValues(alpha: 0.5)),
+                    label: t.landing_page.explore,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.circle_outlined, color: Colors.black.withValues(alpha: 0.5)),
+                    label: t.landing_page.my_booking,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.circle_outlined, color: Colors.black.withValues(alpha: 0.5)),
+                    label: t.landing_page.find_your_way,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.circle_outlined, color: Colors.black.withValues(alpha: 0.5)),
+                    label: t.landing_page.account,
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
