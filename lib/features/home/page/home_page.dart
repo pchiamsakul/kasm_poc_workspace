@@ -56,6 +56,209 @@ class _HomePageState extends AppNavigatorListenState<HomePage, HomeViewModel> {
     });
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          SafeArea(
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(child: carousel()),
+                SliverToBoxAdapter(
+                  child: StreamBuilder(
+                    stream: viewModel.showWifiBadgeMessage,
+                    builder: (context, asyncSnapshot) {
+                      return asyncSnapshot.data != true
+                          ? Container()
+                          : Positioned(
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                decoration: BoxDecoration(color: Colors.black),
+                                child: SafeArea(
+                                  top: false,
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.wifi, color: Colors.white, size: 24),
+                                      SizedBox(width: 12),
+                                      Expanded(
+                                        child: Text(
+                                          'You\'re in a Free Wi-Fi zone. Tap the icon below to connect.',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                    },
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Home content sections
+                        _buildContentSection(),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Floating Action Buttons
+          if (_showWifiButton)
+            StreamBuilder(
+              stream: viewModel.showWifiBadgeMessage,
+              builder: (context, asyncSnapshot) {
+                return asyncSnapshot.data != true
+                    ? Container()
+                    : Positioned(
+                        right: 16,
+                        bottom: 20,
+                        child: _buildFloatingButton(
+                          icon: Assets.icons.wifi.svg(
+                            width: 24,
+                            height: 24,
+                            colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                          ),
+                          onPressed: viewModel.connectWifi,
+                          showCloseButton: true,
+                          onClose: () {
+                            setState(() {
+                              _showWifiButton = false;
+                            });
+                          },
+                        ),
+                      );
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget carousel() {
+    return CarouselSlider(
+      options: CarouselOptions(
+        height: 400,
+        initialPage: 0,
+        viewportFraction: 1.0,
+        enableInfiniteScroll: true,
+        autoPlay: true,
+        autoPlayInterval: Duration(seconds: 3),
+        autoPlayAnimationDuration: Duration(milliseconds: 800),
+        autoPlayCurve: Curves.fastOutSlowIn,
+        scrollDirection: Axis.horizontal,
+        onPageChanged: (index, reason) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+      ),
+      items: _carouselItems.map((i) {
+        return Container(
+          padding: EdgeInsets.fromLTRB(16, MediaQuery.of(context).padding.top, 16, 0),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Colors.grey[800]!, Colors.grey[700]!],
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Center(child: Assets.images.logo.image(height: 40)),
+              SizedBox(height: 24),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          'Hi Amanda!',
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          'You have personalised suggestions for your visit.',
+                          style: TextStyle(fontSize: 16, color: Colors.white70),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Icon(Icons.search, size: 24, color: Colors.white),
+                  SizedBox(width: 16),
+                  Icon(Icons.notifications, size: 24, color: Colors.white),
+                ],
+              ),
+              Expanded(
+                child: Center(
+                  child: Assets.images.placeholder.image(
+                    width: 200,
+                    height: 200,
+                    color: Colors.white38,
+                  ),
+                ),
+              ),
+              Text(
+                'WHAT\'S BIG AT THE KALLANG THIS WEEK',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text('See All Highlights >', style: TextStyle(fontSize: 14, color: Colors.white70)),
+              SizedBox(height: 16),
+              _buildCarouselIndicator(),
+              SizedBox(height: 16),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildCarouselIndicator() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: _carouselItems.asMap().entries.map((entry) {
+        bool isActive = _currentIndex == entry.key;
+        return Container(
+          width: isActive ? 32.0 : 8.0,
+          height: 8.0,
+          margin: EdgeInsets.symmetric(horizontal: 4.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(4),
+            color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.4),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
   Widget _buildFloatingButton({
     required Widget icon,
     required VoidCallback onPressed,
@@ -205,217 +408,6 @@ class _HomePageState extends AppNavigatorListenState<HomePage, HomeViewModel> {
           ),
         ],
       ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          SafeArea(
-            child: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(child: carousel()),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Home content sections
-                        _buildContentSection(),
-                      ],
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: StreamBuilder(
-                    stream: viewModel.shouldShowWifiBadge,
-                    builder: (context, asyncSnapshot) {
-                      return SizedBox(height: asyncSnapshot.data != true ? 0 : 80);
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Floating Action Buttons
-          if (_showWifiButton)
-            StreamBuilder(
-              stream: viewModel.shouldShowWifiBadge,
-              builder: (context, asyncSnapshot) {
-                return asyncSnapshot.data != true
-                    ? Container()
-                    : Positioned(
-                        right: 16,
-                        bottom: 140,
-                        child: _buildFloatingButton(
-                          icon: Assets.icons.wifi.svg(
-                            width: 24,
-                            height: 24,
-                            colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
-                          ),
-                          onPressed: () {
-                            viewModel.connectWifi();
-                          },
-                          showCloseButton: true,
-                          onClose: () {
-                            setState(() {
-                              _showWifiButton = false;
-                            });
-                          },
-                        ),
-                      );
-              },
-            ),
-          StreamBuilder(
-            stream: viewModel.shouldShowWifiBadge,
-            builder: (context, asyncSnapshot) {
-              return asyncSnapshot.data != true
-                  ? Container()
-                  : Positioned(
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                        decoration: BoxDecoration(color: Colors.black),
-                        child: SafeArea(
-                          top: false,
-                          child: Row(
-                            children: [
-                              Icon(Icons.wifi, color: Colors.white, size: 24),
-                              SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  'You\'re in a Free Wi-Fi zone. Tap the icon below to connect.',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget carousel() {
-    return CarouselSlider(
-      options: CarouselOptions(
-        height: 400,
-        initialPage: 0,
-        viewportFraction: 1.0,
-        enableInfiniteScroll: true,
-        autoPlay: true,
-        autoPlayInterval: Duration(seconds: 3),
-        autoPlayAnimationDuration: Duration(milliseconds: 800),
-        autoPlayCurve: Curves.fastOutSlowIn,
-        scrollDirection: Axis.horizontal,
-        onPageChanged: (index, reason) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-      ),
-      items: _carouselItems.map((i) {
-        return Container(
-          padding: EdgeInsets.fromLTRB(16, MediaQuery.of(context).padding.top, 16, 0),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Colors.grey[800]!, Colors.grey[700]!],
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Center(child: Assets.images.logo.image(height: 40)),
-              SizedBox(height: 24),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          'Hi Amanda!',
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          'You have personalised suggestions for your visit.',
-                          style: TextStyle(fontSize: 16, color: Colors.white70),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Icon(Icons.search, size: 24, color: Colors.white),
-                  SizedBox(width: 16),
-                  Icon(Icons.notifications, size: 24, color: Colors.white),
-                ],
-              ),
-              Expanded(
-                child: Center(
-                  child: Assets.images.placeholder.image(
-                    width: 200,
-                    height: 200,
-                    color: Colors.white38,
-                  ),
-                ),
-              ),
-              Text(
-                'WHAT\'S BIG AT THE KALLANG THIS WEEK',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                  letterSpacing: 0.5,
-                ),
-              ),
-              SizedBox(height: 8),
-              Text('See All Highlights >', style: TextStyle(fontSize: 14, color: Colors.white70)),
-              SizedBox(height: 16),
-              _buildCarouselIndicator(),
-              SizedBox(height: 16),
-            ],
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  Widget _buildCarouselIndicator() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: _carouselItems.asMap().entries.map((entry) {
-        bool isActive = _currentIndex == entry.key;
-        return Container(
-          width: isActive ? 32.0 : 8.0,
-          height: 8.0,
-          margin: EdgeInsets.symmetric(horizontal: 4.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
-            color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.4),
-          ),
-        );
-      }).toList(),
     );
   }
 }

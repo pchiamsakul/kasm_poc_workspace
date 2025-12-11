@@ -5,6 +5,7 @@ import 'package:kasm_poc_workspace/core/base/core_platform.dart';
 import 'package:kasm_poc_workspace/core/helper/continuation.dart';
 import 'package:kasm_poc_workspace/core/widget/toast_utils.dart';
 import 'package:kasm_poc_workspace/features/wifi/domain/services/wifi_service.dart';
+import 'package:kasm_poc_workspace/gen/strings.g.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -17,19 +18,36 @@ class HomeViewModel extends BaseViewModel {
   HomeViewModel(this._wifiService);
 
   final PublishSubject<String> showSuccessConnectWifi = PublishSubject();
-  final BehaviorSubject<bool> shouldShowWifiBadge = BehaviorSubject.seeded(false);
+  final BehaviorSubject<bool> showWifiBadgeMessage = BehaviorSubject.seeded(false);
   final Continuation<bool> showWifiTurnOffSuggestion = Continuation();
 
-  // use steam maybe show some suggest ui later
-  final BehaviorSubject<bool> isLocationEnabled = BehaviorSubject.seeded(false);
   final BehaviorSubject<bool> isLoading = BehaviorSubject();
   final BehaviorSubject<String?> connectedNetworkName = BehaviorSubject.seeded(null);
-
   var isWifiNeedRecheckWhenResume = false;
 
   void initialize() {
-    _checkInitialWifiState();
     _listenToWifiChanges();
+    _startFlow();
+  }
+
+  Future<void> _startFlow() async {
+    try {
+      final locationStatus = await Permission.location.status;
+      if (!locationStatus.isGranted) {
+        final permissionStatus = await Permission.location.request();
+        if (permissionStatus.isGranted) {
+          final isInArea = await _isInAreaStadium();
+          if (isInArea) {
+            await _checkInitialWifiState();
+          }
+        }
+      }
+    } catch (e) {}
+  }
+
+  Future<bool> _isInAreaStadium() async {
+    // TODO: Implement logic to check if user is in the stadium area
+    return true;
   }
 
   Future<void> resumeCheckWifi() async {
@@ -43,34 +61,23 @@ class HomeViewModel extends BaseViewModel {
 
   Future<void> _checkInitialWifiState() async {
     try {
-      // Check location permission
-      final locationStatus = await Permission.location.status;
-      isLocationEnabled.add(locationStatus.isGranted);
-
       if (CorePlatform.isAndroid) {
-        // Check if WiFi is enabled
         final isWifiEnabled = await _wifiService.isWifiEnabled();
 
         if (!isWifiEnabled) {
-          shouldShowWifiBadge.add(true);
+          showWifiBadgeMessage.add(true);
           return;
         }
       }
 
-      // Check if connected to WiFi
-      final isConnected = await _wifiService.isWifiConnected();
       final networkName = await _wifiService.getWifiName();
 
       connectedNetworkName.add(networkName);
 
-      if (isConnected && networkName != null) {
-        if (networkName.contains(kallangSSID)) {
-          shouldShowWifiBadge.add(false);
-        } else {
-          shouldShowWifiBadge.add(true);
-        }
+      if (networkName?.contains(kallangSSID) == true) {
+        showWifiBadgeMessage.add(false);
       } else {
-        shouldShowWifiBadge.add(true);
+        showWifiBadgeMessage.add(true);
       }
     } catch (e) {}
   }
@@ -90,30 +97,17 @@ class HomeViewModel extends BaseViewModel {
       }
       return;
     }
-    if (!isLocationEnabled.value) {
-      await _requestLocationPermission();
-      return;
-    }
+    if (!await Permission.location.status.isGranted) {
+      try {
+        final status = await Permission.location.request();
+        if (status.isGranted) {
+          await _connectToKallangWifi();
+        }
+      } catch (e) {
 
-    await _connectToKallangWifi();
-  }
-
-  Future<void> _requestLocationPermission() async {
-    try {
-      final status = await Permission.location.request();
-      isLocationEnabled.add(status.isGranted);
-
-      if (status.isGranted) {
-        // Proceed with WiFi connection
-        await _connectToKallangWifi();
-      } else if (status.isPermanentlyDenied) {
-        // Show settings dialog
-        _showLocationSettingsDialog();
-      } else {
-        showToast('Location permission is required to connect to WiFi.', ToastType.error);
       }
-    } catch (e) {
-      showToast('Failed to request location permission.', ToastType.error);
+    } else {
+      await _connectToKallangWifi();
     }
   }
 
@@ -127,7 +121,7 @@ class HomeViewModel extends BaseViewModel {
 
       if (success) {
         connectedNetworkName.add(kallangSSID);
-        shouldShowWifiBadge.add(false); // Hide banner on successful connection
+        showWifiBadgeMessage.add(false); // Hide banner on successful connection
         showToast(kallangSSID, ToastType.success);
       } else {
         showToast('Failed to connect to Kallang WiFi. Please try again.', ToastType.error);
@@ -161,7 +155,7 @@ class HomeViewModel extends BaseViewModel {
   }
 
   void dismissWifiBanner() {
-    shouldShowWifiBadge.add(false);
+    showWifiBadgeMessage.add(false);
   }
 
   void showToast(String message, ToastType type) {
@@ -179,8 +173,7 @@ class HomeViewModel extends BaseViewModel {
 
   @override
   void dispose() {
-    shouldShowWifiBadge.close();
-    isLocationEnabled.close();
+    showWifiBadgeMessage.close();
     connectedNetworkName.close();
     super.dispose();
   }
