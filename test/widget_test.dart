@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kasm_poc_workspace/features/landing/presentations/landing_page.dart';
+import 'package:kasm_poc_workspace/features/mock/landing_mockup_page.dart';
 import 'package:kasm_poc_workspace/generated/strings.g.dart';
 
 void main() {
   testWidgets('LandingPage counter increments test', (WidgetTester tester) async {
-    await tester.pumpWidget(TranslationProvider(child: const MaterialApp(home: LandingPage())));
+    await tester.pumpWidget(
+      TranslationProvider(child: const MaterialApp(home: LandingMockupPage())),
+    );
 
     expect(find.text('0'), findsOneWidget);
     expect(find.text('1'), findsNothing);
