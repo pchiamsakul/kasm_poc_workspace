@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
-import 'package:kasm_poc_workspace/core/base/base_page.dart';
+import 'package:kasm_poc_workspace/core/routers/app_navigator.dart';
 import 'package:kasm_poc_workspace/core/routers/navable.dart';
 import 'package:kasm_poc_workspace/core/routers/router_name.dart';
 import 'package:kasm_poc_workspace/core/widget/custom_textfield.dart';
@@ -22,7 +22,7 @@ class SignupPage extends StatefulWidget {
   State<SignupPage> createState() => _SignupPageState();
 }
 
-class _SignupPageState extends BasePage<SignupViewModel, SignupPage> {
+class _SignupPageState extends AppNavigatorListenState<SignupPage, SignupViewModel> {
   @override
   Widget buildPageContent(BuildContext context) {
     return Padding(
@@ -36,7 +36,7 @@ class _SignupPageState extends BasePage<SignupViewModel, SignupPage> {
           ),
           const SizedBox(height: 12),
           Text(
-            "It’s free, secure and easy. Enter your email to get started.",
+            "It’s free, secure and easy.Enter your email to get started.",
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
           ),
           const SizedBox(height: 36),

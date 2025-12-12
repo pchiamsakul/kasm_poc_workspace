@@ -5,6 +5,8 @@ import 'package:kasm_poc_workspace/core/routers/app_navigator.dart';
 import 'package:rxdart/rxdart.dart';
 
 class BaseViewModel extends Disposable {
+  final BehaviorSubject<bool> isLoading = BehaviorSubject.seeded(false);
+
   final AppNavigator appNavigator = getIt();
   AppNavigatorListenState? _listener;
   final CompositeSubscription disposeBag = CompositeSubscription();
@@ -26,5 +28,9 @@ class BaseViewModel extends Disposable {
       WidgetsBinding.instance.removeObserver(_listener!);
     }
     disposeBag.dispose();
+  }
+
+  void setIsLoading(bool value) {
+    isLoading.add(value);
   }
 }
