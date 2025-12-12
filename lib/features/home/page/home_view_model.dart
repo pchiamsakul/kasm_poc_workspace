@@ -116,7 +116,7 @@ class HomeViewModel extends BaseViewModel {
 
   Future<void> _connectToKallangWifi() async {
     try {
-      await _wifiService.connectToWifi(ssid: kallangSSID, password: null, timeoutSeconds: 30);
+      await _wifiService.connectToWifiTemporary(ssid: kallangSSID, password: null, timeoutSeconds: 30);
     } catch (e) {
     } finally {}
   }
