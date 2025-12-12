@@ -108,3 +108,4 @@ windows/flutter/ephemeral/
 
 # Linux related
 linux/flutter/ephemeral/
+devtools_options.yaml
