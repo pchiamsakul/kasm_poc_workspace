@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:kasm_poc_workspace/core/base/base_view_model.dart';
 import 'package:kasm_poc_workspace/features/activity/presentation/activity_page.dart';
-import 'package:kasm_poc_workspace/features/home/page/home_page.dart';
+import 'package:kasm_poc_workspace/features/home/presentations/home_page.dart';
 import 'package:rxdart/rxdart.dart';
 
 @injectable

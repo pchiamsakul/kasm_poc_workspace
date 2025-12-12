@@ -2,14 +2,21 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Dev",
+      "name": "Develop",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_dev.dart",
       "args": ["--flavor", "develop"]
     },
     {
-      "name": "Prod",
+      "name": "Staging",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_staging.dart",
+      "args": ["--flavor", "uat"]
+    },
+    {
+      "name": "Production",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",

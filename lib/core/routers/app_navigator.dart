@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:kasm_poc_workspace/app/app_module.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:kasm_poc_workspace/core/base/base_view_model.dart';
+import 'package:kasm_poc_workspace/core/helper/provider.dart';
 import 'package:kasm_poc_workspace/core/routers/app_page_route_builder.dart';
+import 'package:kasm_poc_workspace/core/widget/loading_container.dart';
+import 'package:kasm_poc_workspace/generated/strings.g.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:synchronized/synchronized.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-
 
 class AppGlobalDialogConfig {
   final String? title;
@@ -29,7 +31,20 @@ class AppGlobalDialogConfig {
 }
 
 abstract class AppNavigatorListenState<T extends StatefulWidget, VM extends BaseViewModel>
-    extends State<T> with WidgetsBindingObserver {
+    extends State<T>
+    with WidgetsBindingObserver {
+  late final VM viewModel;
+  late final ScrollController _scrollController = ScrollController();
+  late final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  // Getter
+  GlobalKey<FormState> get formKey => _formKey;
+  ScrollController get scrollController => _scrollController;
+  Translations get translation => t;
+  bool get isShowAppBar => true;
+  bool get isSafeAreaTopEnabled => true;
+
   void onPause() {}
 
   void onPauseFromPush() {}
@@ -37,8 +52,6 @@ abstract class AppNavigatorListenState<T extends StatefulWidget, VM extends Base
   void onResume() {}
 
   void onResumeFromPop() {}
-
-  late final VM viewModel;
 
   void initViewModel() {
     viewModel = getIt();
@@ -59,6 +72,41 @@ abstract class AppNavigatorListenState<T extends StatefulWidget, VM extends Base
     } else if (state == AppLifecycleState.paused) {
       onPause();
     }
+  }
+
+  String getAppBarTitle() => '';
+
+  List<Widget> getAppBarActions() => [];
+
+  PreferredSizeWidget? getAppBar(BuildContext context) {
+    return isShowAppBar
+        ? AppBar(
+            title: Align(alignment: Alignment.centerLeft, child: Text(getAppBarTitle())),
+            actionsPadding: const EdgeInsets.only(right: 40),
+            automaticallyImplyLeading: true,
+            actions: getAppBarActions(),
+          )
+        : null;
+  }
+
+  Widget buildPageContent(BuildContext context) => SizedBox();
+
+  Widget BuildButtomNavigationBar(BuildContext context) => SizedBox();
+
+  @override
+  Widget build(BuildContext context) {
+    return Provider(
+      value: viewModel,
+      child: LoadingContainer(
+        isLoading: viewModel.isLoading,
+        child: Scaffold(
+          key: _scaffoldKey,
+          appBar: getAppBar(context),
+          body: SafeArea(top: isSafeAreaTopEnabled, child: buildPageContent(context)),
+          bottomNavigationBar: BuildButtomNavigationBar(context),
+        ),
+      ),
+    );
   }
 }
 
@@ -106,11 +154,11 @@ class AppNavigator {
     if (routeName.startsWith("https://")) {
       launchUrlString(routeName, mode: LaunchMode.inAppWebView);
     } else {
-      final future = _currentState?.pushNamed(routeName,
-              arguments: AppNavigatorConfiguration(
-                transition: transition,
-                arguments: argument,
-              )) ??
+      final future =
+          _currentState?.pushNamed(
+            routeName,
+            arguments: AppNavigatorConfiguration(transition: transition, arguments: argument),
+          ) ??
           Future.value(null);
       if (_currentState != null) {
         _firePauseEvent();
@@ -124,13 +172,16 @@ class AppNavigator {
   }
 
   @optionalTypeArgs
-  Future pushReplacementNamed(String routeName,
-      {dynamic argument, RouteTransition? transition}) async {
-    final future = await _currentState?.pushReplacementNamed(routeName,
-            arguments: AppNavigatorConfiguration(
-              transition: transition,
-              arguments: argument,
-            )) ??
+  Future pushReplacementNamed(
+    String routeName, {
+    dynamic argument,
+    RouteTransition? transition,
+  }) async {
+    final future =
+        await _currentState?.pushReplacementNamed(
+          routeName,
+          arguments: AppNavigatorConfiguration(transition: transition, arguments: argument),
+        ) ??
         Future.value(null);
     if (_currentState != null) {
       _firePauseEvent();
@@ -148,15 +199,17 @@ class AppNavigator {
   }
 
   @optionalTypeArgs
-  Future pushNamedAndRemoveUntil(String routeName, RoutePredicate predicate,
-      {dynamic arguments, RouteTransition? transition}) async {
-    final future = await _currentState?.pushNamedAndRemoveUntil(
+  Future pushNamedAndRemoveUntil(
+    String routeName,
+    RoutePredicate predicate, {
+    dynamic arguments,
+    RouteTransition? transition,
+  }) async {
+    final future =
+        await _currentState?.pushNamedAndRemoveUntil(
           routeName,
           predicate,
-          arguments: AppNavigatorConfiguration(
-            transition: transition,
-            arguments: arguments,
-          ),
+          arguments: AppNavigatorConfiguration(transition: transition, arguments: arguments),
         ) ??
         Future.value(null);
     if (_currentState != null) {
@@ -212,10 +265,7 @@ class AppNavigator {
   }
 
   void showDefaultDialog([AppGlobalDialogConfig? appConfig]) {
-    globalError.add(appConfig ??
-        const AppGlobalDialogConfig(
-          title: "เกิดข้อผิดพลาด",
-        ));
+    globalError.add(appConfig ?? const AppGlobalDialogConfig(title: "เกิดข้อผิดพลาด"));
   }
 
   void popUntilIfNotFoundPushNamed(String routeName) {
