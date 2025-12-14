@@ -36,9 +36,9 @@ android {
             applicationIdSuffix = ".dev"
         }
 
-        create("uat") {
+        create("staging") {
             dimension = "default"
-            applicationIdSuffix = ".uat"
+            applicationIdSuffix = ".staging"
         }
         create("production") {
             dimension = "default"
