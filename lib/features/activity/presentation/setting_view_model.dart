@@ -12,14 +12,11 @@ class SettingViewModel extends BaseViewModel {
 
   late final BehaviorSubject<String> behavior = BehaviorSubject.seeded(title);
   late final PublishSubject<String> publishStream = PublishSubject();
-  // popup
-  // navigation
-  // show error message
 
   final GetActivityUsecase getActivityUsecase;
 
   SettingViewModel(this.getActivityUsecase) {
-    publishStream.add(title + "Change");
+    publishStream.add('${title}Change');
   }
 
   Future<void> goToHome() async {
@@ -28,9 +25,13 @@ class SettingViewModel extends BaseViewModel {
     switch (result) {
       case ResultSuccess():
         final data = result.data;
+        // ignore: unused_local_variable
+        final _ = data;
         break;
       case ResultError<ActivityEntity>():
         final error = result.error;
+        // ignore: unused_local_variable
+        final _ = error;
         break;
     }
 
