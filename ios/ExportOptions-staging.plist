@@ -8,7 +8,7 @@
     <string>YOUR_TEAM_ID_HERE</string>
     <key>provisioningProfiles</key>
     <dict>
-        <key>com.kasm_poc_workspace.uat</key>
+        <key>com.kasm_poc_workspace.staging</key>
         <string>YOUR_PROVISIONING_PROFILE_NAME_HERE</string>
     </dict>
     <key>signingStyle</key>
