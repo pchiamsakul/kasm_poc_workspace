@@ -83,252 +83,55 @@ class _HomePageState extends AppNavigatorListenState<HomePage, HomeViewModel> {
   @override
   bool get isSafeAreaTopEnabled => false;
 
-  @override
-  Widget buildPageContent(BuildContext context) {
-    return Stack(
-      children: [
-        CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Container(
-                height: 400,
-                padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-                color: Color(0xFF4D4D4D),
-                child: Column(
-                  children: <Widget>[
-                    Center(child: Assets.images.logo.image()),
-                    SizedBox(height: 14),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  'Hi Amanda!',
-                                  style: TextStyle(fontSize: 16.0, color: Colors.white),
-                                ),
-                                Text(
-                                  'These are today’s picks for you',
-                                  style: TextStyle(fontSize: 12, color: Colors.white),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Icon(Icons.search, size: 24, color: Colors.white),
-                          SizedBox(height: 16),
-                          Icon(Icons.notifications, size: 24, color: Colors.white),
-                        ],
-                      ),
+  Widget _buildActivityCard({Image? image, String? title, String? description}) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(4),
+      child: Container(
+        color: Colors.black.withValues(alpha: 0.1),
+        child: Row(
+          children: <Widget>[
+            image ?? Assets.images.placeholder.image(height: 54, width: 54, fit: BoxFit.cover),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  if (title != null)
+                    Text(
+                      title.toUpperCase(),
+                      style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700),
                     ),
-                    Expanded(
-                      child: Carousel(
-                        currentIndex: _currentIndex,
-                        carouselItems: _carouselItems,
-                        onPageChanged: (index, reason) {
-                          setState(() {
-                            _currentIndex = index;
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: StreamBuilder(
-                stream: viewModel.showWifiBadgeMessage,
-                builder: (context, asyncSnapshot) {
-                  return asyncSnapshot.data != true
-                      ? Container()
-                      : Positioned(
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                            decoration: BoxDecoration(color: Colors.black),
-                            child: SafeArea(
-                              top: false,
-                              child: Row(
-                                children: [
-                                  Icon(Icons.wifi, color: Colors.white, size: 24),
-                                  SizedBox(width: 12),
-                                  Expanded(
-                                    child: Text(
-                                      'You\'re in a Free Wi-Fi zone. Tap the icon below to connect.',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                },
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Home content sections
-                    _buildContentSection(),
-                  ],
-                ),
+                  if (description != null) Text(description, style: TextStyle(fontSize: 9)),
+                ],
               ),
             ),
           ],
         ),
-        // Floating Action Buttons
-        if (_showWifiButton)
-          StreamBuilder(
-            stream: viewModel.showWifiBadgeMessage,
-            builder: (context, asyncSnapshot) {
-              return asyncSnapshot.data != true
-                  ? Container()
-                  : Positioned(
-                      right: 16,
-                      bottom: 20,
-                      child: _buildFloatingButton(
-                        icon: Assets.icons.wifi.svg(
-                          width: 24,
-                          height: 24,
-                          colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
-                        ),
-                        onPressed: viewModel.connectWifi,
-                        showCloseButton: true,
-                        onClose: () {
-                          setState(() {
-                            _showWifiButton = false;
-                          });
-                        },
-                      ),
-                    );
-            },
-          ),
-      ],
+      ),
     );
   }
 
-  // Widget carousel() {
-  //   return CarouselSlider(
-  //     options: CarouselOptions(
-  //       height: 400,
-  //       initialPage: 0,
-  //       viewportFraction: 1.0,
-  //       enableInfiniteScroll: true,
-  //       autoPlay: true,
-  //       autoPlayInterval: Duration(seconds: 3),
-  //       autoPlayAnimationDuration: Duration(milliseconds: 800),
-  //       autoPlayCurve: Curves.fastOutSlowIn,
-  //       scrollDirection: Axis.horizontal,
-  //       onPageChanged: (index, reason) {
-  //         setState(() {
-  //           _currentIndex = index;
-  //         });
-  //       },
-  //     ),
-  //     items: _carouselItems.map((i) {
-  //       return Container(
-  //         padding: EdgeInsets.fromLTRB(16, MediaQuery.of(context).padding.top, 16, 0),
-  //         decoration: BoxDecoration(
-  //           gradient: LinearGradient(
-  //             begin: Alignment.topCenter,
-  //             end: Alignment.bottomCenter,
-  //             colors: [Colors.grey[800]!, Colors.grey[700]!],
-  //           ),
-  //         ),
-  //         child: Column(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: <Widget>[
-  //             Center(child: Assets.images.logo.image(height: 40)),
-  //             SizedBox(height: 24),
-  //             Row(
-  //               children: <Widget>[
-  //                 Expanded(
-  //                   child: Column(
-  //                     crossAxisAlignment: CrossAxisAlignment.start,
-  //                     children: <Widget>[
-  //                       Text(
-  //                         'Hi Amanda!',
-  //                         style: TextStyle(
-  //                           fontSize: 28,
-  //                           fontWeight: FontWeight.w600,
-  //                           color: Colors.white,
-  //                         ),
-  //                       ),
-  //                       SizedBox(height: 4),
-  //                       Text(
-  //                         'You have personalised suggestions for your visit.',
-  //                         style: TextStyle(fontSize: 16, color: Colors.white70),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //                 SizedBox(width: 16),
-  //                 Icon(Icons.search, size: 24, color: Colors.white),
-  //                 SizedBox(width: 16),
-  //                 Icon(Icons.notifications, size: 24, color: Colors.white),
-  //               ],
-  //             ),
-  //             Expanded(
-  //               child: Center(
-  //                 child: Assets.images.placeholder.image(
-  //                   width: 200,
-  //                   height: 200,
-  //                   color: Colors.white38,
-  //                 ),
-  //               ),
-  //             ),
-  //             Text(
-  //               'WHAT\'S BIG AT THE KALLANG THIS WEEK',
-  //               style: TextStyle(
-  //                 fontSize: 20,
-  //                 fontWeight: FontWeight.w700,
-  //                 color: Colors.white,
-  //                 letterSpacing: 0.5,
-  //               ),
-  //             ),
-  //             SizedBox(height: 8),
-  //             Text('See All Highlights >', style: TextStyle(fontSize: 14, color: Colors.white70)),
-  //             SizedBox(height: 16),
-  //             _buildCarouselIndicator(),
-  //             SizedBox(height: 16),
-  //           ],
-  //         ),
-  //       );
-  //     }).toList(),
-  //   );
-  // }
-
-  // Widget _buildCarouselIndicator() {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.center,
-  //     children: _carouselItems.asMap().entries.map((entry) {
-  //       bool isActive = _currentIndex == entry.key;
-  //       return Container(
-  //         width: isActive ? 32.0 : 8.0,
-  //         height: 8.0,
-  //         margin: EdgeInsets.symmetric(horizontal: 4.0),
-  //         decoration: BoxDecoration(
-  //           borderRadius: BorderRadius.circular(4),
-  //           color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.4),
-  //         ),
-  //       );
-  //     }).toList(),
-  //   );
-  // }
+  Widget _buildEventCard() {
+    return Container(
+      height: 170,
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Color(0xFFCCCCCC),
+        borderRadius: BorderRadius.circular(4),
+        image: DecorationImage(image: AssetImage(Assets.images.placeholder.path)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Text(
+            'Brewerkz Riverside',
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Colors.black),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildFloatingButton({
     required Widget icon,
@@ -340,8 +143,8 @@ class _HomePageState extends AppNavigatorListenState<HomePage, HomeViewModel> {
       clipBehavior: Clip.none,
       children: [
         Container(
-          width: 68,
-          height: 68,
+          width: 56,
+          height: 56,
           decoration: BoxDecoration(
             color: KColors.primary,
             shape: BoxShape.circle,
@@ -390,95 +193,211 @@ class _HomePageState extends AppNavigatorListenState<HomePage, HomeViewModel> {
     );
   }
 
-  Widget _buildContentSection() {
-    return Column(
+  @override
+  Widget buildPageContent(BuildContext context) {
+    return Stack(
       children: [
-        // Content grid similar to design
-        GridView.count(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: 1.5,
-          children: [
-            _buildContentCard('TODAY\'S ENTRY INFO'),
-            _buildContentCard('FAN GROUP ACCESS'),
-            _buildContentCard('YOUR PERKS'),
-            _buildContentCard('TO YOUR GATE'),
+        CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Container(
+                height: 400,
+                padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                color: Color(0xFF4D4D4D),
+                child: Column(
+                  children: <Widget>[
+                    Center(child: Assets.images.logo.image()),
+                    SizedBox(height: 14),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  'Hi Amanda!',
+                                  style: TextStyle(fontSize: 16.0, color: Colors.white),
+                                ),
+                                Text(
+                                  'These are today’s picks for you',
+                                  style: TextStyle(fontSize: 12, color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Icon(Icons.search, size: 24, color: Colors.white),
+                          SizedBox(width: 16),
+                          Icon(Icons.notifications, size: 24, color: Colors.white),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Carousel(
+                        currentIndex: _currentIndex,
+                        carouselItems: _carouselItems,
+                        onPageChanged: (index, reason) {
+                          setState(() {
+                            _currentIndex = index;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: StreamBuilder(
+                stream: viewModel.showWifiBadgeMessage,
+                builder: (context, asyncSnapshot) {
+                  return asyncSnapshot.data != true
+                      ? SizedBox.shrink()
+                      : Container(
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          decoration: BoxDecoration(color: Colors.black),
+                          child: SafeArea(
+                            top: false,
+                            child: Row(
+                              children: [
+                                Icon(Icons.wifi, color: Colors.white, size: 24),
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    'You\'re in a Free Wi-Fi zone. Tap the icon below to connect.',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                },
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // _buildContentSection(),
+                    // Home content sections
+                    SizedBox(height: 14),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(child: _buildActivityCard(title: 'Play Badminton')),
+                          SizedBox(width: 8),
+                          Expanded(child: _buildActivityCard(title: 'Pop Concerts')),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(child: _buildActivityCard(title: 'Family Time')),
+                          SizedBox(width: 8),
+                          Expanded(child: _buildActivityCard(title: 'Get Active')),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 32),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      padding: EdgeInsets.only(left: 20),
+                      child: Row(
+                        // Need to update to be dynamic based on the number of events
+                        children: List.generate(
+                          20,
+                          (index) => Padding(
+                            padding: const EdgeInsets.only(right: 6),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Assets.images.placeholder.image(height: 28, width: 28),
+                                SizedBox(height: 16),
+                                Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 4),
+                                  child: Text('Event $index'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 32),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'winter Festival highlights'.toUpperCase(),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: _buildEventCard(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
-        SizedBox(height: 32),
-        // Festival section
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(12),
+        // Floating Action Buttons
+        if (_showWifiButton)
+          StreamBuilder(
+            stream: viewModel.showWifiBadgeMessage,
+            builder: (context, snapshot) {
+              return snapshot.data != true
+                  ? Container()
+                  : Positioned(
+                      right: 16,
+                      bottom: 88,
+                      child: _buildFloatingButton(
+                        icon: Assets.icons.wifi.svg(
+                          width: 24,
+                          height: 24,
+                          colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                        ),
+                        onPressed: viewModel.connectWifi,
+                        showCloseButton: true,
+                        onClose: () {
+                          setState(() {
+                            _showWifiButton = false;
+                          });
+                        },
+                      ),
+                    );
+            },
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'SEASONAL FESTIVAL',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black87),
-              ),
-              SizedBox(height: 16),
-              Container(
-                height: 120,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Center(
-                  child: Assets.images.placeholder.image(
-                    width: 100,
-                    height: 100,
-                    color: Colors.grey[400],
-                  ),
-                ),
-              ),
-            ],
+        Positioned(
+          right: 16,
+          bottom: 20,
+          child: _buildFloatingButton(
+            icon: Assets.icons.chat.svg(
+              width: 24,
+              height: 24,
+              colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+            ),
+            onPressed: viewModel.connectWifi,
+            showCloseButton: true,
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildContentCard(String title) {
-    return Container(
-      decoration: BoxDecoration(color: Colors.grey[100], borderRadius: BorderRadius.circular(12)),
-      child: Column(
-        children: [
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Center(
-                child: Assets.images.placeholder.image(
-                  width: 40,
-                  height: 40,
-                  color: Colors.grey[500],
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
-            child: Text(
-              title,
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black87),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
