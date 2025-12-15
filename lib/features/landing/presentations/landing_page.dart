@@ -3,6 +3,9 @@ import 'package:injectable/injectable.dart';
 import 'package:kasm_poc_workspace/app/app_module.dart';
 import 'package:kasm_poc_workspace/core/routers/navable.dart';
 import 'package:kasm_poc_workspace/core/routers/router_name.dart';
+import 'package:kasm_poc_workspace/features/account/presentation/account_page.dart';
+import 'package:kasm_poc_workspace/features/activity/presentation/activity_page.dart';
+import 'package:kasm_poc_workspace/features/home/presentations/home_page.dart';
 import 'package:kasm_poc_workspace/features/landing/presentations/landing_view_model.dart';
 import 'package:kasm_poc_workspace/generated/strings.g.dart';
 
@@ -22,12 +25,21 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
   late final LandingViewModel viewModel;
+  late final List<Widget> pages;
 
   @override
   void initState() {
     super.initState();
     viewModel = getIt<LandingViewModel>();
-    viewModel.onInit();
+
+    pages = [
+      // Replace with the actual pages
+      HomePage(),
+      Text('Explore', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+      ActivityPage(),
+      Text('Find Your Way', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+      AccountPage(),
+    ];
   }
 
   @override
@@ -40,9 +52,9 @@ class _LandingPageState extends State<LandingPage> {
 
           return IndexedStack(
             index: selectedIndex,
-            children: List.generate(viewModel.pages.length, (index) {
+            children: List.generate(pages.length, (index) {
               if (viewModel.createdPages.containsKey(index) || index == selectedIndex) {
-                return viewModel.getPageAt(index);
+                return viewModel.getPageAt(pages, index);
               }
 
               // Return empty container for unvisited pages
